@@ -9,18 +9,52 @@
 import UIKit
 import CocoaAsyncSocket
 
-class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate  {
-
+class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
+    
     override func viewDidLoad() {
+        
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        self.cv_commands.delegate = self
+        self.cv_commands.dataSource = self
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+    //--------------------------------------------------------------------------
+    // Connect UI
+    //--------------------------------------------------------------------------
+    
+    @IBOutlet weak var cv_commands: UICollectionView!
+    
+    
+    //--------------------------------------------------------------------------
+    // Commands collection view
+    //--------------------------------------------------------------------------
+    let collection_commands = ["E","C","X","U","D","A","S","O","B","K","T"]
+    
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
+        
+        return collection_commands.count
+        
+    }
+    
+    
+    // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
+        
+        let cell = cv_commands.dequeueReusableCell(withReuseIdentifier: "commands_cell", for: indexPath) as! CommandsCollectionView
+        
+        cell.cell_btn.setTitle(collection_commands[indexPath.row], for: .normal)
+        
+        return cell
+        
+    }
+    
     
     //--------------------------------------------------------------------------
     // Low Level UDP code

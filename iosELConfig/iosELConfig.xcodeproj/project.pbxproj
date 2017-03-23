@@ -15,6 +15,7 @@
 		048A80381E83FDD6008D9886 /* iosELConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048A80371E83FDD6008D9886 /* iosELConfigTests.swift */; };
 		048A80431E83FDD6008D9886 /* iosELConfigUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048A80421E83FDD6008D9886 /* iosELConfigUITests.swift */; };
 		048A80551E84032B008D9886 /* objectiveC.m in Sources */ = {isa = PBXBuildFile; fileRef = 048A80541E84032B008D9886 /* objectiveC.m */; };
+		048A80571E841FBB008D9886 /* CommandsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048A80561E841FBB008D9886 /* CommandsCollectionView.swift */; };
 		F96703A6794F618D8EBCD522 /* Pods_iosELConfig.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCF074C9E3491D9382C2A2EB /* Pods_iosELConfig.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		048A80441E83FDD6008D9886 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		048A80531E84032B008D9886 /* iosELConfig-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iosELConfig-Bridging-Header.h"; sourceTree = "<group>"; };
 		048A80541E84032B008D9886 /* objectiveC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = objectiveC.m; sourceTree = "<group>"; };
+		048A80561E841FBB008D9886 /* CommandsCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandsCollectionView.swift; sourceTree = "<group>"; };
 		7BAAA7B726F79F94E56B8F97 /* Pods-iosELConfig.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosELConfig.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iosELConfig/Pods-iosELConfig.debug.xcconfig"; sourceTree = "<group>"; };
 		9C85B3BFFA25792B5D42688A /* Pods-iosELConfig.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosELConfig.release.xcconfig"; path = "Pods/Target Support Files/Pods-iosELConfig/Pods-iosELConfig.release.xcconfig"; sourceTree = "<group>"; };
 		DCF074C9E3491D9382C2A2EB /* Pods_iosELConfig.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosELConfig.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,6 +117,7 @@
 				048A802E1E83FDD6008D9886 /* Info.plist */,
 				048A80541E84032B008D9886 /* objectiveC.m */,
 				048A80531E84032B008D9886 /* iosELConfig-Bridging-Header.h */,
+				048A80561E841FBB008D9886 /* CommandsCollectionView.swift */,
 			);
 			path = iosELConfig;
 			sourceTree = "<group>";
@@ -343,6 +346,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				048A80571E841FBB008D9886 /* CommandsCollectionView.swift in Sources */,
 				048A80551E84032B008D9886 /* objectiveC.m in Sources */,
 				048A80251E83FDD6008D9886 /* ViewController.swift in Sources */,
 				048A80231E83FDD6008D9886 /* AppDelegate.swift in Sources */,
