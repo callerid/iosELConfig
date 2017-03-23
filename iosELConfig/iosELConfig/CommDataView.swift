@@ -31,5 +31,9 @@ class CommDataView: UITableView, UITableViewDataSource, UITableViewDelegate {
         commData.append(data)
         
     }
+    
+    public func getCommDataCount() -> Int{
+        return commData.count
+    }
 
 }

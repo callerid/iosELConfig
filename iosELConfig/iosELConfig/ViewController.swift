@@ -78,9 +78,12 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollec
     //--------------------------------------------------------------------------
     
     func logCommData(data:String){
+
+        commdata_datasource_delegate.logCommData(data: data)
+        let comm_data_count = commdata_datasource_delegate.getCommDataCount()
         
         tbv_comm.beginUpdates()
-        commdata_datasource_delegate.logCommData(data: data)
+        tbv_comm.insertRows(at: [IndexPath(row: comm_data_count-1, section: 0)], with: .automatic)
         tbv_comm.endUpdates()
         
     }
