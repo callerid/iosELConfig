@@ -1,0 +1,7 @@
+target 'iosELConfig' do
+
+  # Pods for ELConfig
+  use_frameworks!
+  pod 'CocoaAsyncSocket'
+
+end
