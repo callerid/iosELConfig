@@ -11,12 +11,20 @@ import CocoaAsyncSocket
 
 class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
     
+    let commdata_datasource_delegate = CommDataView()
+    @IBOutlet weak var tbv_comm: UITableView!
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        self.cv_commands.delegate = self
-        self.cv_commands.dataSource = self
+        cv_commands.dataSource = self
+        cv_commands.delegate = self
+        
+        tbv_comm.dataSource = commdata_datasource_delegate
+        tbv_comm.delegate = commdata_datasource_delegate
+        
+        startServer()
         
     }
 
@@ -35,9 +43,9 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollec
     //--------------------------------------------------------------------------
     // Commands collection view
     //--------------------------------------------------------------------------
-    let collection_commands = ["E","C","X","U","D","A","S","O","B","K","T"]
+    let collection_commands = ["V","E","C","X","U","D","A","S","O","B","K","T"]
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
         
         return collection_commands.count
         
@@ -45,7 +53,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollec
     
     
     // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
         
         let cell = cv_commands.dequeueReusableCell(withReuseIdentifier: "commands_cell", for: indexPath) as! CommandsCollectionView
         
@@ -55,6 +63,27 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollec
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let command = collection_commands[indexPath.row]
+        
+        let commandString = "^^Id-\(command)"
+        
+        sendPacket(body: commandString, ipAddString: "255.255.255.255")
+        
+    }
+    
+    //--------------------------------------------------------------------------
+    // Log comm data
+    //--------------------------------------------------------------------------
+    
+    func logCommData(data:String){
+        
+        tbv_comm.beginUpdates()
+        commdata_datasource_delegate.logCommData(data: data)
+        tbv_comm.endUpdates()
+        
+    }
     
     //--------------------------------------------------------------------------
     // Low Level UDP code
@@ -198,6 +227,15 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollec
                 }
                 
             }
+            
+            // If comm data then log
+            if(lineNumber=="n/a"){
+                
+                logCommData(data: udpRecieved as String)
+                
+            }
+            
+            
         }
     }
     
@@ -211,15 +249,14 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollec
                 guard let port = UInt16("3520"), port > 0 else {
                     return nil
                 }
-                let sock = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
+                let socketSend = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
                 do {
-                    try sock.enableBroadcast(true)
-                    //try sock.beginReceiving()
+                    try socketSend.enableBroadcast(true)
                 } catch _ as NSError {
-                    sock.close()
+                    socketSend.close()
                     return nil
                 }
-                _socketSend = sock
+                _socketSend = socketSend
             }
             return _socketSend
         }
