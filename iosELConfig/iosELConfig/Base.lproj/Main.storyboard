@@ -86,15 +86,15 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Comm. Data" id="34T-Xy-Tbi">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="100" id="Y85-z3-N8i">
-                                        <rect key="frame" x="0.0" y="319" width="1024" height="100"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="145" id="Y85-z3-N8i">
+                                        <rect key="frame" x="0.0" y="319" width="1024" height="145"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Y85-z3-N8i" id="pHr-Fd-nre">
-                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="99"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="144"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="h9c-BO-W6V">
-                                                    <rect key="frame" x="8" y="0.0" width="1008" height="99"/>
+                                                    <rect key="frame" x="8" y="0.0" width="1008" height="144"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </tableView>
@@ -106,7 +106,7 @@
                             <tableViewSection headerTitle="Phone Data" id="TdV-Rc-mBD">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="135" id="c0W-vM-bE9">
-                                        <rect key="frame" x="0.0" y="447" width="1024" height="135"/>
+                                        <rect key="frame" x="0.0" y="492" width="1024" height="135"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="c0W-vM-bE9" id="SgH-4b-Poa">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="135"/>
