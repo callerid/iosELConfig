@@ -35,5 +35,9 @@ class CommDataView: UITableView, UITableViewDataSource, UITableViewDelegate {
     public func getCommDataCount() -> Int{
         return commData.count
     }
+    
+    public func clear(){
+        commData = []
+    }
 
 }

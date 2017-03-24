@@ -9,17 +9,15 @@
 import UIKit
 import CocoaAsyncSocket
 
-class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
-    
+class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
+
     let commdata_datasource_delegate = CommDataView()
+    
     @IBOutlet weak var tbv_comm: UITableView!
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
-        cv_commands.dataSource = self
-        cv_commands.delegate = self
         
         tbv_comm.dataSource = commdata_datasource_delegate
         tbv_comm.delegate = commdata_datasource_delegate
@@ -33,43 +31,55 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollec
         // Dispose of any resources that can be recreated.
     }
     
-    //--------------------------------------------------------------------------
-    // Connect UI
-    //--------------------------------------------------------------------------
+    @IBAction func comm_data_clear(_ sender: Any) {
     
-    @IBOutlet weak var cv_commands: UICollectionView!
-    
-    
-    //--------------------------------------------------------------------------
-    // Commands collection view
-    //--------------------------------------------------------------------------
-    let collection_commands = ["V","E","C","X","U","D","A","S","O","B","K","T"]
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
-        
-        return collection_commands.count
+        commdata_datasource_delegate.clear()
+        tbv_comm.reloadData()
         
     }
     
-    
-    // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
-        
-        let cell = cv_commands.dequeueReusableCell(withReuseIdentifier: "commands_cell", for: indexPath) as! CommandsCollectionView
-        
-        cell.cell_btn.setTitle(collection_commands[indexPath.row], for: .normal)
-        
-        return cell
-        
+    @IBAction func v_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func e_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func c_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func x_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func u_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func d_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func a_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func s_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func o_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func b_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func k_click(_ sender: Any) {
+        command_click(command: "V")
+    }
+    @IBAction func t_click(_ sender: Any) {
+        command_click(command: "V")
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func command_click(command:String){
         
-        let command = collection_commands[indexPath.row]
+        let commandStr = "^^Id-\(command)"
         
-        let commandString = "^^Id-\(command)"
-        
-        sendPacket(body: commandString, ipAddString: "255.255.255.255")
+        sendPacket(body: commandStr, ipAddString: "255.255.255.255")
         
     }
     
@@ -234,7 +244,54 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate, UICollec
             // If comm data then log
             if(lineNumber=="n/a"){
                 
-                logCommData(data: udpRecieved as String)
+                let commPattern = "([Ee])([Cc])([Xx])([Uu])([Dd])([Aa])([Ss])([Oo])([Bb])([Kk])([Tt]) L=(\\d{1,2}) (\\d{1,2}/\\d{1,2} (\\d{1,2}:\\d{1,2}:\\d{1,2}))"
+                let commRegex = try! NSRegularExpression(pattern: commPattern, options: [])
+                let commMatches = commRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
+                
+                if(commMatches.count>0){
+                    
+                    var recData = "n/a"
+                    var e = "n/a"
+                    var c = "n/a"
+                    var x = "n/a"
+                    var u = "n/a"
+                    var d = "n/a"
+                    var a = "n/a"
+                    var s = "n/a"
+                    var o = "n/a"
+                    var b = "n/a"
+                    var k = "n/a"
+                    var t = "n/a"
+                    var line = "n/a"
+                    var date = "n/a"
+                    
+                    commRegex.enumerateMatches(in: udpRecieved as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:udpRecieved.length))
+                    {(result : NSTextCheckingResult?, _, _) in
+                        let capturedRange = result!.rangeAt(1)
+                        if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
+                        
+                            recData = udpRecieved.substring(with: result!.rangeAt(0))
+                            e = udpRecieved.substring(with: result!.rangeAt(1))
+                            c = udpRecieved.substring(with: result!.rangeAt(2))
+                            x = udpRecieved.substring(with: result!.rangeAt(3))
+                            u = udpRecieved.substring(with: result!.rangeAt(4))
+                            d = udpRecieved.substring(with: result!.rangeAt(5))
+                            a = udpRecieved.substring(with: result!.rangeAt(6))
+                            s = udpRecieved.substring(with: result!.rangeAt(7))
+                            o = udpRecieved.substring(with: result!.rangeAt(8))
+                            b = udpRecieved.substring(with: result!.rangeAt(9))
+                            k = udpRecieved.substring(with: result!.rangeAt(10))
+                            t = udpRecieved.substring(with: result!.rangeAt(11))
+                            line = udpRecieved.substring(with: result!.rangeAt(12))
+                            date = udpRecieved.substring(with: result!.rangeAt(13))
+                        
+                        }
+                    
+                    
+                    logCommData(data: recData)
+                    
+                    }
+                }
                 
             }
             
