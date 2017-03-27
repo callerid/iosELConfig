@@ -24,6 +24,9 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         startServer()
         
+        // Startup with V command to load parameters
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -89,12 +92,16 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     func logCommData(data:String){
 
-        commdata_datasource_delegate.logCommData(data: data)
-        let comm_data_count = commdata_datasource_delegate.getCommDataCount()
+        if(commdata_datasource_delegate.logCommData(data: data)){
+            
+            let comm_data_count = commdata_datasource_delegate.getCommDataCount()
+            
+            tbv_comm.beginUpdates()
+            tbv_comm.insertRows(at: [IndexPath(row: comm_data_count-1, section: 0)], with: .automatic)
+            tbv_comm.endUpdates()
         
-        tbv_comm.beginUpdates()
-        tbv_comm.insertRows(at: [IndexPath(row: comm_data_count-1, section: 0)], with: .automatic)
-        tbv_comm.endUpdates()
+        }
+        
         
     }
     

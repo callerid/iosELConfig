@@ -26,9 +26,16 @@ class CommDataView: UITableView, UITableViewDataSource, UITableViewDelegate {
         
     }
     
-    public func logCommData(data:String){
+    public func logCommData(data:String) -> Bool{
         
+        if(commData.count>0){
+            if(commData[commData.count-1]==data){
+                return false
+            }
+        }
         commData.append(data)
+        
+        return true
         
     }
     
