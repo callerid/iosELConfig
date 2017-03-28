@@ -57,7 +57,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
         
         // Setup update timer for tech connections
-         _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(techUpdate), userInfo: nil, repeats: true)
+         _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateParameters), userInfo: nil, repeats: true)
         
     }
 
@@ -275,9 +275,9 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
          <8>dest mac</8>
          <9>this ip</9>
  
-        */
+ 
         
-        let thisIP = getThisIP()
+        let thisIP = getIFAddresses()
         
         let dataString = "<1>\(units)</1>" +
         "<2>\(serial)</2>" +
@@ -312,6 +312,16 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         sendPacket(body: sendString, ipAddString: "72.16.182.60", port: techPort)
         
+        */
+    }
+    
+    // -------------------------------
+    // Update parameters
+    // -------------------------------
+    
+    func updateParameters(){
+        
+        sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: "3520")
         
     }
     
