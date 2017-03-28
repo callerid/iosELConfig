@@ -13,6 +13,22 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
 
     let commdata_datasource_delegate = CommDataView()
     
+    //-----------------------------------------
+    // LINK UI
+    //-----------------------------------------
+    
+    @IBOutlet weak var btn_e: UIButton!
+    @IBOutlet weak var btn_c: UIButton!
+    @IBOutlet weak var btn_a: UIButton!
+    @IBOutlet weak var btn_x: UIButton!
+    @IBOutlet weak var btn_u: UIButton!
+    @IBOutlet weak var btn_d: UIButton!
+    @IBOutlet weak var btn_s: UIButton!
+    @IBOutlet weak var btn_o: UIButton!
+    @IBOutlet weak var btn_k: UIButton!
+    @IBOutlet weak var btn_b: UIButton!
+    @IBOutlet weak var btn_t: UIButton!
+    
     @IBOutlet weak var tbv_comm: UITableView!
     
     override func viewDidLoad() {
@@ -25,10 +41,22 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         startServer()
         
         // Startup with V command to load parameters
-        
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
         
     }
 
+    //-------------------------------------------------------------------------
+    // Actions
+    //-------------------------------------------------------------------------
+    
+    @IBAction func btn_toggles_click(_ sender: Any) {
+    
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
+    
+    }
+    
+    //-------------------------------------------------------------------------
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -42,39 +70,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     }
     
     @IBAction func v_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func e_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func c_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func x_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func u_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func d_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func a_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func s_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func o_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func b_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func k_click(_ sender: Any) {
-        command_click(command: "V")
-    }
-    @IBAction func t_click(_ sender: Any) {
         command_click(command: "V")
     }
     
@@ -294,8 +289,129 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         
                         }
                     
+                        // if got toggles then enable them
+                        btn_e.isEnabled = true
+                        btn_c.isEnabled = true
+                        btn_x.isEnabled = true
+                        btn_u.isEnabled = true
+                        btn_d.isEnabled = true
+                        btn_a.isEnabled = true
+                        btn_s.isEnabled = true
+                        btn_o.isEnabled = true
+                        btn_b.isEnabled = true
+                        btn_k.isEnabled = true
+                        btn_t.isEnabled = true
                     
-                    logCommData(data: recData)
+                        // Update toggles
+                        btn_e.setTitle(e, for: .normal)
+                        if(e=="e"){
+                            btn_e.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_e.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_e.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_e.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_c.setTitle(c, for: .normal)
+                        if(c=="c"){
+                            btn_c.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_c.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_c.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_c.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_x.setTitle(x, for: .normal)
+                        if(x=="x"){
+                            btn_x.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_x.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_x.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_x.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_u.setTitle(u, for: .normal)
+                        if(u=="u"){
+                            btn_u.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_u.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_u.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_u.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_d.setTitle(d, for: .normal)
+                        if(d=="d"){
+                            btn_d.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_d.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_d.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_d.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_a.setTitle(a, for: .normal)
+                        if(a=="a"){
+                            btn_a.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_a.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_a.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_a.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_s.setTitle(s, for: .normal)
+                        if(s=="s"){
+                            btn_s.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_s.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_s.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_s.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_o.setTitle(o, for: .normal)
+                        if(o=="o"){
+                            btn_o.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_o.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_o.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_o.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_b.setTitle(b, for: .normal)
+                        if(b=="b"){
+                            btn_b.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_b.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_b.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_b.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_k.setTitle(k, for: .normal)
+                        if(k=="k"){
+                            btn_k.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_k.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_k.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_k.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_t.setTitle(t, for: .normal)
+                        if(t=="t"){
+                            btn_t.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_t.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_t.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_t.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
                     
                     }
                 }

@@ -24,16 +24,20 @@
                                         <rect key="frame" x="0.0" y="28" width="1024" height="228"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OcM-mw-Xf5" id="C2h-GV-OlZ">
-                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="227"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="228"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pHe-k0-Mdy">
                                                     <rect key="frame" x="29" y="80" width="220" height="55"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="27"/>
                                                     <state key="normal" title="Retrieve Toggles">
                                                         <color key="titleColor" red="0.97763905689999997" green="0.97944538010000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="Rnk-hQ-BlK" appends="YES" id="4kJ-8Y-3Vk"/>
+                                                    </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7UL-06-cAH">
                                                     <rect key="frame" x="29" y="143" width="242" height="55"/>
@@ -50,6 +54,13 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="01" borderStyle="roundedRect" textAlignment="center" minimumFontSize="24" translatesAutoresizingMaskIntoConstraints="NO" id="ZzA-x6-1lc">
+                                                    <rect key="frame" x="555" y="31" width="92" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="textColor" red="0.16516572830000001" green="0.2489949437" blue="0.40131152850000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="IP Address:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2xh-OZ-wUt">
                                                     <rect key="frame" x="39" y="19" width="153" height="55"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -57,6 +68,46 @@
                                                     <color key="textColor" red="0.97763905689999997" green="0.97944538010000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Line:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xKP-Va-g0x">
+                                                    <rect key="frame" x="477" y="18" width="70" height="55"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                                                    <color key="textColor" red="0.97763905689999997" green="0.97944538010000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="T1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WLT-fN-mjJ">
+                                                    <rect key="frame" x="335" y="143" width="38" height="55"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                                                    <color key="textColor" red="0.97763905689999997" green="0.97944538010000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="G7p-KM-LpQ">
+                                                    <rect key="frame" x="382" y="155" width="51" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="T2" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UDb-9g-PwU">
+                                                    <rect key="frame" x="444" y="143" width="38" height="55"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                                                    <color key="textColor" red="0.97763905689999997" green="0.97944538010000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="mTr-9u-WJu">
+                                                    <rect key="frame" x="490" y="155" width="51" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="T3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UR1-BX-LWY">
+                                                    <rect key="frame" x="552" y="143" width="47" height="55"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                                                    <color key="textColor" red="0.97763905689999997" green="0.97944538010000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="MIU-Eo-J2N">
+                                                    <rect key="frame" x="598" y="155" width="51" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </switch>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="0.16516572830000001" green="0.2489949437" blue="0.40131152850000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -65,114 +116,125 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Commands" id="dwI-qE-FRd">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="75" id="u15-Tk-bpy">
-                                        <rect key="frame" x="0.0" y="284" width="1024" height="75"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="58" id="u15-Tk-bpy">
+                                        <rect key="frame" x="0.0" y="284" width="1024" height="58"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="u15-Tk-bpy" id="3iK-Ze-Ezx">
-                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="74"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="58"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Cn-Ns-9wv">
-                                                    <rect key="frame" x="70" y="-3" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Cn-Ns-9wv">
+                                                    <rect key="frame" x="16" y="0.0" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="E"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="882-k2-5wM" appends="YES" id="q4r-qq-gCJ"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dCg-7o-6pH">
-                                                    <rect key="frame" x="134" y="-3" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dCg-7o-6pH">
+                                                    <rect key="frame" x="59" y="0.0" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="C"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="XXQ-GI-ieu" appends="YES" id="cf7-uc-t1t"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hKy-bf-u3j">
-                                                    <rect key="frame" x="390" y="-3" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hKy-bf-u3j">
+                                                    <rect key="frame" x="231" y="0.0" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="A"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="pFO-CA-Mjn" appends="YES" id="dkp-R3-QVE"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j9a-hk-MLU">
-                                                    <rect key="frame" x="198" y="-3" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j9a-hk-MLU">
+                                                    <rect key="frame" x="102" y="0.0" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="X"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="gbn-r5-4sR" appends="YES" id="j5c-d5-2jx"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R1s-sc-8LC">
-                                                    <rect key="frame" x="262" y="-3" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R1s-sc-8LC">
+                                                    <rect key="frame" x="145" y="0.0" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="U"/>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yv7-Su-3Nd">
-                                                    <rect key="frame" x="18" y="-3" width="44" height="80"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <gestureRecognizers/>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
-                                                    <state key="normal" title="V"/>
                                                     <connections>
-                                                        <action selector="v_click:" destination="6cb-gn-HSN" eventType="touchUpInside" id="b9l-JD-gUk"/>
-                                                        <outletCollection property="gestureRecognizers" destination="Pj4-HM-IIc" appends="YES" id="PWg-bN-5u3"/>
-                                                        <outletCollection property="gestureRecognizers" destination="Pj4-HM-IIc" appends="YES" id="y0K-Tw-GkM"/>
+                                                        <outletCollection property="gestureRecognizers" destination="pcs-v7-EZg" appends="YES" id="W1r-tP-VeM"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KAo-lU-a65">
-                                                    <rect key="frame" x="326" y="-3" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KAo-lU-a65">
+                                                    <rect key="frame" x="188" y="0.0" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="D"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="qBI-We-6z5" appends="YES" id="5cw-hO-6O2"/>
+                                                    </connections>
                                                 </button>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="74" id="lI5-ps-ZLi">
-                                        <rect key="frame" x="0.0" y="359" width="1024" height="74"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lI5-ps-ZLi" id="jxP-be-ypA">
-                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="73"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pN0-F6-G20">
-                                                    <rect key="frame" x="72" y="-4" width="44" height="80"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <gestureRecognizers/>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
-                                                    <state key="normal" title="O"/>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QRw-pN-K3v">
-                                                    <rect key="frame" x="18" y="-4" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QRw-pN-K3v">
+                                                    <rect key="frame" x="274" y="0.0" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="S"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="bYg-DZ-wPC" appends="YES" id="jy8-BW-LNo"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4n3-ZE-12s">
-                                                    <rect key="frame" x="200" y="-3" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pN0-F6-G20">
+                                                    <rect key="frame" x="317" y="0.0" width="35" height="58"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <gestureRecognizers/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
+                                                    <state key="normal" title="O"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="wXA-2O-nAv" appends="YES" id="wyL-qP-X6a"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4n3-ZE-12s">
+                                                    <rect key="frame" x="403" y="0.0" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="K"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="ij0-VZ-OCH" appends="YES" id="eYo-4V-pUa"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tZk-vc-9kG">
-                                                    <rect key="frame" x="136" y="-4" width="44" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tZk-vc-9kG">
+                                                    <rect key="frame" x="360" y="0.0" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="B"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="1Vo-We-83S" appends="YES" id="NCR-FP-C24"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cjS-sB-I50">
-                                                    <rect key="frame" x="252" y="-4" width="56" height="80"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cjS-sB-I50">
+                                                    <rect key="frame" x="446" y="0.0" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
                                                     <state key="normal" title="T"/>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="U4R-wT-fa9" appends="YES" id="V4X-p4-ljU"/>
+                                                    </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SZm-lB-1oO">
-                                                    <rect key="frame" x="318" y="-4" width="56" height="80"/>
+                                                    <rect key="frame" x="489" y="0.0" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -188,15 +250,15 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Phone Data" id="34T-Xy-Tbi">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="250" id="Y85-z3-N8i">
-                                        <rect key="frame" x="0.0" y="461" width="1024" height="250"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="404" id="Y85-z3-N8i">
+                                        <rect key="frame" x="0.0" y="370" width="1024" height="404"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Y85-z3-N8i" id="pHr-Fd-nre">
-                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="249"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="404"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="h9c-BO-W6V">
-                                                    <rect key="frame" x="8" y="0.0" width="1008" height="240"/>
+                                                    <rect key="frame" x="8" y="0.0" width="1008" height="395"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </tableView>
@@ -215,6 +277,17 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="1024" height="1024"/>
                     <connections>
+                        <outlet property="btn_a" destination="hKy-bf-u3j" id="6qh-IN-cfv"/>
+                        <outlet property="btn_b" destination="tZk-vc-9kG" id="7fZ-jS-7Z2"/>
+                        <outlet property="btn_c" destination="dCg-7o-6pH" id="w8J-Dh-Jew"/>
+                        <outlet property="btn_d" destination="KAo-lU-a65" id="ZmD-dO-alQ"/>
+                        <outlet property="btn_e" destination="3Cn-Ns-9wv" id="Xrv-qP-Y61"/>
+                        <outlet property="btn_k" destination="4n3-ZE-12s" id="u69-rf-VAe"/>
+                        <outlet property="btn_o" destination="pN0-F6-G20" id="s2d-Ay-YpK"/>
+                        <outlet property="btn_s" destination="QRw-pN-K3v" id="OWK-yK-gFu"/>
+                        <outlet property="btn_t" destination="cjS-sB-I50" id="ctX-M8-LAm"/>
+                        <outlet property="btn_u" destination="R1s-sc-8LC" id="N9N-rT-9dh"/>
+                        <outlet property="btn_x" destination="j9a-hk-MLU" id="RKD-lu-aSz"/>
                         <outlet property="tbv_comm" destination="h9c-BO-W6V" id="Djc-oG-uQT"/>
                     </connections>
                 </tableViewController>
@@ -229,6 +302,22 @@
                         <action selector="comm_data_clear:" destination="6cb-gn-HSN" id="3vz-u7-XUT"/>
                     </connections>
                 </tapGestureRecognizer>
+                <tapGestureRecognizer id="Rnk-hQ-BlK" userLabel="retieve toggles">
+                    <connections>
+                        <action selector="btn_toggles_click:" destination="6cb-gn-HSN" id="54v-AD-UZ8"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="882-k2-5wM" userLabel="e_click"/>
+                <tapGestureRecognizer id="XXQ-GI-ieu" userLabel="c_click"/>
+                <tapGestureRecognizer id="gbn-r5-4sR" userLabel="x_click"/>
+                <tapGestureRecognizer id="pcs-v7-EZg" userLabel="u_click"/>
+                <tapGestureRecognizer id="qBI-We-6z5" userLabel="d_click"/>
+                <tapGestureRecognizer id="pFO-CA-Mjn" userLabel="a_click"/>
+                <tapGestureRecognizer id="bYg-DZ-wPC" userLabel="s_click"/>
+                <tapGestureRecognizer id="wXA-2O-nAv" userLabel="o_click"/>
+                <tapGestureRecognizer id="1Vo-We-83S" userLabel="b_click"/>
+                <tapGestureRecognizer id="ij0-VZ-OCH" userLabel="k_click"/>
+                <tapGestureRecognizer id="U4R-wT-fa9" userLabel="t_click"/>
             </objects>
             <point key="canvasLocation" x="-1862.6953124999998" y="-90.625"/>
         </scene>
