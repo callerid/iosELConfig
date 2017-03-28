@@ -8,6 +8,7 @@
 
 import UIKit
 import CocoaAsyncSocket
+import QuartzCore
 
 class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
 
@@ -26,11 +27,26 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     @IBOutlet weak var btn_k: UIButton!
     @IBOutlet weak var btn_b: UIButton!
     
+    @IBOutlet weak var btn_t1: UIButton!
+    @IBOutlet weak var btn_t2: UIButton!
+    @IBOutlet weak var btn_t3: UIButton!
+    @IBOutlet weak var tb_code: UITextField!
+    @IBOutlet weak var lb_code: UILabel!
+    
     @IBOutlet weak var tbv_comm: UITableView!
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        btn_t1.layer.cornerRadius = 10
+        btn_t1.clipsToBounds = true
+        
+        btn_t2.layer.cornerRadius = 10
+        btn_t2.clipsToBounds = true
+        
+        btn_t3.layer.cornerRadius = 10
+        btn_t3.clipsToBounds = true
         
         tbv_comm.dataSource = commdata_datasource_delegate
         tbv_comm.delegate = commdata_datasource_delegate
@@ -38,17 +54,22 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         startServer()
         
         // Startup with V command to load parameters
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
+        
+        // Setup update timer for tech connections
+         _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(techUpdate), userInfo: nil, repeats: true)
         
     }
 
     //-------------------------------------------------------------------------
     // Actions
     //-------------------------------------------------------------------------
-    
+    // -------------------
+    // Toggles
+    // -------------------
     @IBAction func btn_toggles_click(_ sender: Any) {
     
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
     
     }
     
@@ -140,6 +161,160 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
     }
     
+    // -------------------
+    // Tech connections
+    // -------------------
+    
+    var connectCode = "0000"
+    var connectToTech = 0
+    
+    @IBAction func t1_click(_ sender: Any) {
+        
+        connectToTech = 1
+        
+        btn_t1.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        btn_t1.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+        
+        btn_t2.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t2.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        btn_t3.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t3.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        tb_code.isHidden = false
+        lb_code.isHidden = false
+        
+    }
+    
+    @IBAction func t2_click(_ sender: Any) {
+        
+        connectToTech = 2
+        
+        btn_t2.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        btn_t2.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+        
+        btn_t1.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t1.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        btn_t3.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t3.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        tb_code.isHidden = false
+        lb_code.isHidden = false
+        
+    }
+    
+    @IBAction func t3_click(_ sender: Any) {
+        
+        connectToTech = 3
+        
+        btn_t3.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        btn_t3.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+        
+        btn_t2.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t2.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        btn_t1.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t1.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        tb_code.isHidden = false
+        lb_code.isHidden = false
+        
+    }
+    
+    // UDP repeat of recevied data
+    func techRepeat(repeatString:String){
+        
+        if(connectToTech == 0) {
+            return
+        }
+        
+        let sendString = "<" + tb_code.text! + ">" + repeatString
+        
+        var techPort = "3520"
+        switch connectToTech {
+            
+        case 1:
+            techPort = "3531"
+            break
+            
+        case 2:
+            techPort = "3532"
+            break
+            
+        case 3:
+            techPort = "3534"
+            break
+            
+        default:
+            break
+        }
+        
+        sendPacket(body: sendString, ipAddString: "72.16.182.60", port: techPort)
+        
+        
+    }
+    
+    // UDP repeat of recevied data
+    func techUpdate(units:Int,serial:String,unitNumber:String,unitIP:String,unitMAC:String,unitPort:String,destIP:String,destMAC:String){
+        
+        if(connectToTech == 0) {
+            return
+        }
+        
+        sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: "3520")
+        
+        /*
+         <1>units dectected</1>
+         <2>serial number</2>
+         <3>Unit number</3>
+         <4>unit ip</4>
+         <5>unit mac</5>
+         <6>unit port</6>
+         <7>dest ip</7>
+         <8>dest mac</8>
+         <9>this ip</9>
+ 
+        */
+        
+        let thisIP = getThisIP()
+        
+        let dataString = "<1>\(units)</1>" +
+        "<2>\(serial)</2>" +
+        "<3>\(unitNumber)</3>" +
+        "<4>\(unitIP)</4>" +
+        "<5>\(unitMAC)</5>" +
+        "<6>\(unitPort)</6>" +
+        "<7>\(destIP)</7>" +
+        "<8>\(destMAC)</8>" +
+        "<9>\(thisIP)</9>"
+        
+        let sendString = "<" + tb_code.text! + ">" + dataString
+        
+        var techPort = "3520"
+        switch connectToTech {
+            
+        case 1:
+            techPort = "3531"
+            break
+            
+        case 2:
+            techPort = "3532"
+            break
+            
+        case 3:
+            techPort = "3534"
+            break
+            
+        default:
+            break
+        }
+        
+        sendPacket(body: sendString, ipAddString: "72.16.182.60", port: techPort)
+        
+        
+    }
+    
     //-------------------------------------------------------------------------
     
     override func didReceiveMemoryWarning() {
@@ -156,7 +331,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBAction func v_click(_ sender: Any) {
         
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
         
     }
     
@@ -164,7 +339,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         let commandStr = "^^Id-\(command)"
         
-        sendPacket(body: commandStr, ipAddString: "255.255.255.255")
+        sendPacket(body: commandStr, ipAddString: "255.255.255.255",port: "3520")
         
         _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getToggles), userInfo: nil, repeats: false)
         
@@ -173,7 +348,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     func getToggles() {
         
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
         
     }
     
@@ -516,10 +691,10 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         socketSend = nil
     }
     
-    func sendPacket(body: String,ipAddString:String){
+    func sendPacket(body: String,ipAddString:String,port:String){
         
         let host = ipAddString
-        let port = UInt16("3520")
+        let port = UInt16(port)
         
         guard socketSend != nil else {
             return
