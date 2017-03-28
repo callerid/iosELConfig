@@ -17,17 +17,14 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // LINK UI
     //-----------------------------------------
     
-    @IBOutlet weak var btn_e: UIButton!
     @IBOutlet weak var btn_c: UIButton!
     @IBOutlet weak var btn_a: UIButton!
-    @IBOutlet weak var btn_x: UIButton!
     @IBOutlet weak var btn_u: UIButton!
     @IBOutlet weak var btn_d: UIButton!
     @IBOutlet weak var btn_s: UIButton!
     @IBOutlet weak var btn_o: UIButton!
     @IBOutlet weak var btn_k: UIButton!
     @IBOutlet weak var btn_b: UIButton!
-    @IBOutlet weak var btn_t: UIButton!
     
     @IBOutlet weak var tbv_comm: UITableView!
     
@@ -55,6 +52,94 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     }
     
+    @IBAction func c_click(_ sender: Any) {
+        
+        if(btn_c.titleLabel?.text=="c"){
+            command_click(command: "C")
+        }
+        else{
+            command_click(command: "c")
+        }
+        
+    }
+    
+    @IBAction func u_click(_ sender: Any) {
+        
+        if(btn_u.titleLabel?.text=="u"){
+            command_click(command: "U")
+        }
+        else{
+            command_click(command: "u")
+        }
+        
+    }
+    
+    @IBAction func d_click(_ sender: Any) {
+        
+        if(btn_d.titleLabel?.text=="d"){
+            command_click(command: "D")
+        }
+        else{
+            command_click(command: "d")
+        }
+        
+    }
+    
+    @IBAction func a_click(_ sender: Any) {
+        
+        if(btn_a.titleLabel?.text=="a"){
+            command_click(command: "A")
+        }
+        else{
+            command_click(command: "a")
+        }
+        
+    }
+    
+    @IBAction func s_click(_ sender: Any) {
+        
+        if(btn_s.titleLabel?.text=="s"){
+            command_click(command: "S")
+        }
+        else{
+            command_click(command: "s")
+        }
+        
+    }
+    
+    @IBAction func o_click(_ sender: Any) {
+        
+        if(btn_o.titleLabel?.text=="o"){
+            command_click(command: "O")
+        }
+        else{
+            command_click(command: "o")
+        }
+        
+    }
+    
+    @IBAction func b_click(_ sender: Any) {
+        
+        if(btn_b.titleLabel?.text=="b"){
+            command_click(command: "B")
+        }
+        else{
+            command_click(command: "b")
+        }
+        
+    }
+    
+    @IBAction func k_click(_ sender: Any) {
+        
+        if(btn_k.titleLabel?.text=="k"){
+            command_click(command: "K")
+        }
+        else{
+            command_click(command: "k")
+        }
+        
+    }
+    
     //-------------------------------------------------------------------------
     
     override func didReceiveMemoryWarning() {
@@ -70,7 +155,9 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     }
     
     @IBAction func v_click(_ sender: Any) {
-        command_click(command: "V")
+        
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
+        
     }
     
     func command_click(command:String){
@@ -78,6 +165,15 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         let commandStr = "^^Id-\(command)"
         
         sendPacket(body: commandStr, ipAddString: "255.255.255.255")
+        
+        _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getToggles), userInfo: nil, repeats: false)
+        
+        
+    }
+    
+    func getToggles() {
+        
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
         
     }
     
@@ -290,9 +386,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         }
                     
                         // if got toggles then enable them
-                        btn_e.isEnabled = true
                         btn_c.isEnabled = true
-                        btn_x.isEnabled = true
                         btn_u.isEnabled = true
                         btn_d.isEnabled = true
                         btn_a.isEnabled = true
@@ -300,19 +394,8 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         btn_o.isEnabled = true
                         btn_b.isEnabled = true
                         btn_k.isEnabled = true
-                        btn_t.isEnabled = true
                     
                         // Update toggles
-                        btn_e.setTitle(e, for: .normal)
-                        if(e=="e"){
-                            btn_e.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_e.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_e.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_e.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
                         btn_c.setTitle(c, for: .normal)
                         if(c=="c"){
                             btn_c.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
@@ -321,16 +404,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         else{
                             btn_c.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
                             btn_c.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_x.setTitle(x, for: .normal)
-                        if(x=="x"){
-                            btn_x.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_x.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_x.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_x.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
                         }
                         
                         btn_u.setTitle(u, for: .normal)
@@ -401,16 +474,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         else{
                             btn_k.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
                             btn_k.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_t.setTitle(t, for: .normal)
-                        if(t=="t"){
-                            btn_t.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_t.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_t.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_t.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
                         }
                     
                     }

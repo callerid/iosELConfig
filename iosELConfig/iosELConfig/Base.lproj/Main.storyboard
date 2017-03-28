@@ -123,18 +123,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="58"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Cn-Ns-9wv">
-                                                    <rect key="frame" x="16" y="0.0" width="35" height="58"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <gestureRecognizers/>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
-                                                    <state key="normal" title="E"/>
-                                                    <connections>
-                                                        <outletCollection property="gestureRecognizers" destination="882-k2-5wM" appends="YES" id="q4r-qq-gCJ"/>
-                                                    </connections>
-                                                </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dCg-7o-6pH">
-                                                    <rect key="frame" x="59" y="0.0" width="35" height="58"/>
+                                                    <rect key="frame" x="20" y="-1" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -144,7 +134,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hKy-bf-u3j">
-                                                    <rect key="frame" x="231" y="0.0" width="35" height="58"/>
+                                                    <rect key="frame" x="149" y="-1" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -153,18 +143,8 @@
                                                         <outletCollection property="gestureRecognizers" destination="pFO-CA-Mjn" appends="YES" id="dkp-R3-QVE"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j9a-hk-MLU">
-                                                    <rect key="frame" x="102" y="0.0" width="35" height="58"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <gestureRecognizers/>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
-                                                    <state key="normal" title="X"/>
-                                                    <connections>
-                                                        <outletCollection property="gestureRecognizers" destination="gbn-r5-4sR" appends="YES" id="j5c-d5-2jx"/>
-                                                    </connections>
-                                                </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R1s-sc-8LC">
-                                                    <rect key="frame" x="145" y="0.0" width="35" height="57"/>
+                                                    <rect key="frame" x="63" y="-1" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -174,7 +154,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KAo-lU-a65">
-                                                    <rect key="frame" x="188" y="0.0" width="35" height="57"/>
+                                                    <rect key="frame" x="106" y="-1" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -184,7 +164,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QRw-pN-K3v">
-                                                    <rect key="frame" x="274" y="0.0" width="35" height="58"/>
+                                                    <rect key="frame" x="192" y="-1" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -194,7 +174,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pN0-F6-G20">
-                                                    <rect key="frame" x="317" y="0.0" width="35" height="58"/>
+                                                    <rect key="frame" x="235" y="-1" width="35" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -204,7 +184,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4n3-ZE-12s">
-                                                    <rect key="frame" x="403" y="0.0" width="35" height="57"/>
+                                                    <rect key="frame" x="321" y="-1" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -214,7 +194,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tZk-vc-9kG">
-                                                    <rect key="frame" x="360" y="0.0" width="35" height="57"/>
+                                                    <rect key="frame" x="278" y="-1" width="35" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -223,18 +203,8 @@
                                                         <outletCollection property="gestureRecognizers" destination="1Vo-We-83S" appends="YES" id="NCR-FP-C24"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cjS-sB-I50">
-                                                    <rect key="frame" x="446" y="0.0" width="35" height="57"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <gestureRecognizers/>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
-                                                    <state key="normal" title="T"/>
-                                                    <connections>
-                                                        <outletCollection property="gestureRecognizers" destination="U4R-wT-fa9" appends="YES" id="V4X-p4-ljU"/>
-                                                    </connections>
-                                                </button>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SZm-lB-1oO">
-                                                    <rect key="frame" x="489" y="0.0" width="35" height="57"/>
+                                                    <rect key="frame" x="377" y="-2" width="35" height="59"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -281,13 +251,10 @@
                         <outlet property="btn_b" destination="tZk-vc-9kG" id="7fZ-jS-7Z2"/>
                         <outlet property="btn_c" destination="dCg-7o-6pH" id="w8J-Dh-Jew"/>
                         <outlet property="btn_d" destination="KAo-lU-a65" id="ZmD-dO-alQ"/>
-                        <outlet property="btn_e" destination="3Cn-Ns-9wv" id="Xrv-qP-Y61"/>
                         <outlet property="btn_k" destination="4n3-ZE-12s" id="u69-rf-VAe"/>
                         <outlet property="btn_o" destination="pN0-F6-G20" id="s2d-Ay-YpK"/>
                         <outlet property="btn_s" destination="QRw-pN-K3v" id="OWK-yK-gFu"/>
-                        <outlet property="btn_t" destination="cjS-sB-I50" id="ctX-M8-LAm"/>
                         <outlet property="btn_u" destination="R1s-sc-8LC" id="N9N-rT-9dh"/>
-                        <outlet property="btn_x" destination="j9a-hk-MLU" id="RKD-lu-aSz"/>
                         <outlet property="tbv_comm" destination="h9c-BO-W6V" id="Djc-oG-uQT"/>
                     </connections>
                 </tableViewController>
@@ -307,17 +274,46 @@
                         <action selector="btn_toggles_click:" destination="6cb-gn-HSN" id="54v-AD-UZ8"/>
                     </connections>
                 </tapGestureRecognizer>
-                <tapGestureRecognizer id="882-k2-5wM" userLabel="e_click"/>
-                <tapGestureRecognizer id="XXQ-GI-ieu" userLabel="c_click"/>
-                <tapGestureRecognizer id="gbn-r5-4sR" userLabel="x_click"/>
-                <tapGestureRecognizer id="pcs-v7-EZg" userLabel="u_click"/>
-                <tapGestureRecognizer id="qBI-We-6z5" userLabel="d_click"/>
-                <tapGestureRecognizer id="pFO-CA-Mjn" userLabel="a_click"/>
-                <tapGestureRecognizer id="bYg-DZ-wPC" userLabel="s_click"/>
-                <tapGestureRecognizer id="wXA-2O-nAv" userLabel="o_click"/>
-                <tapGestureRecognizer id="1Vo-We-83S" userLabel="b_click"/>
-                <tapGestureRecognizer id="ij0-VZ-OCH" userLabel="k_click"/>
-                <tapGestureRecognizer id="U4R-wT-fa9" userLabel="t_click"/>
+                <tapGestureRecognizer id="XXQ-GI-ieu" userLabel="c_click">
+                    <connections>
+                        <action selector="c_click:" destination="6cb-gn-HSN" id="8uq-al-XlJ"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="pcs-v7-EZg" userLabel="u_click">
+                    <connections>
+                        <action selector="u_click:" destination="6cb-gn-HSN" id="02a-bR-cRu"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="qBI-We-6z5" userLabel="d_click">
+                    <connections>
+                        <action selector="d_click:" destination="6cb-gn-HSN" id="mui-Dz-MOK"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="pFO-CA-Mjn" userLabel="a_click">
+                    <connections>
+                        <action selector="a_click:" destination="6cb-gn-HSN" id="kwB-ua-rhm"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="bYg-DZ-wPC" userLabel="s_click">
+                    <connections>
+                        <action selector="s_click:" destination="6cb-gn-HSN" id="74D-81-Z2i"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="wXA-2O-nAv" userLabel="o_click">
+                    <connections>
+                        <action selector="o_click:" destination="6cb-gn-HSN" id="EDH-6U-3Vs"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="1Vo-We-83S" userLabel="b_click">
+                    <connections>
+                        <action selector="b_click:" destination="6cb-gn-HSN" id="YMU-2L-Udy"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="ij0-VZ-OCH" userLabel="k_click">
+                    <connections>
+                        <action selector="k_click:" destination="6cb-gn-HSN" id="1T6-bh-gv4"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-1862.6953124999998" y="-90.625"/>
         </scene>
