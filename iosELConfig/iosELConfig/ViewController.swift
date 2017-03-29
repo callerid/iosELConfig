@@ -320,7 +320,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // -------------------------------
     
     func updateParameters(){
-        
+    
         sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: "3520")
         
     }
