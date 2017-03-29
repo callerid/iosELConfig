@@ -675,44 +675,16 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // -----------------
     // Sending
     // -----------------
-    var _socketSend: GCDAsyncUdpSocket?
-    var socketSend: GCDAsyncUdpSocket? {
-        get {
-            if _socketSend == nil {
-                guard let port = UInt16("3520"), port > 0 else {
-                    return nil
-                }
-                let socketSend = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
-                do {
-                    try socketSend.enableBroadcast(true)
-                } catch _ as NSError {
-                    socketSend.close()
-                    return nil
-                }
-                _socketSend = socketSend
-            }
-            return _socketSend
-        }
-        set {
-            _socketSend?.close()
-            _socketSend = newValue
-        }
-    }
-    
-    deinit {
-        socketSend = nil
-    }
-    
     func sendPacket(body: String,ipAddString:String,port:String){
         
         let host = ipAddString
         let port = UInt16(port)
         
-        guard socketSend != nil else {
+        guard socket != nil else {
             return
         }
         
-        socketSend?.send(body.data(using: String.Encoding.utf8)!, toHost: host, port: port!, withTimeout: 2, tag: 0)
+        socket?.send(body.data(using: String.Encoding.utf8)!, toHost: host, port: port!, withTimeout: 2, tag: 0)
         
     }
     
