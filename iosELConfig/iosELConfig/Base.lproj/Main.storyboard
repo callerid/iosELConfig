@@ -280,6 +280,8 @@
                         <outlet property="btn_u" destination="R1s-sc-8LC" id="N9N-rT-9dh"/>
                         <outlet property="lb_code" destination="aPw-O5-yMZ" id="eu4-kT-zXq"/>
                         <outlet property="tb_code" destination="jWL-18-Xj8" id="geR-oM-jN1"/>
+                        <outlet property="tb_header" destination="cs2-oQ-ZP0" id="ShF-eD-WLG"/>
+                        <outlet property="tb_unit_ip" destination="aAv-PA-cs3" id="Tod-wi-AXg"/>
                         <outlet property="tbv_comm" destination="h9c-BO-W6V" id="Djc-oG-uQT"/>
                     </connections>
                 </tableViewController>

@@ -17,6 +17,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     //-----------------------------------------
     // LINK UI
     //-----------------------------------------
+    @IBOutlet weak var tb_header: UINavigationItem!
     
     @IBOutlet weak var btn_c: UIButton!
     @IBOutlet weak var btn_a: UIButton!
@@ -27,6 +28,8 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     @IBOutlet weak var btn_k: UIButton!
     @IBOutlet weak var btn_b: UIButton!
     
+    @IBOutlet weak var tb_unit_ip: UITextField!
+    
     @IBOutlet weak var btn_t1: UIButton!
     @IBOutlet weak var btn_t2: UIButton!
     @IBOutlet weak var btn_t3: UIButton!
@@ -34,6 +37,16 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     @IBOutlet weak var lb_code: UILabel!
     
     @IBOutlet weak var tbv_comm: UITableView!
+    
+    // ----------------
+    // Globals
+    // ----------------
+    var unit_ip:String = "n/a"
+    var unit_mac_address:String = "n/a"
+    var dest_ip:String = "n/a"
+    var dest_mac_address:String = "n/a"
+    var dest_port = "n/a"
+    // ----------------
     
     override func viewDidLoad() {
         
@@ -57,10 +70,16 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
         
         // Setup update timer for tech connections
-         _ = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(updateParameters), userInfo: nil, repeats: true)
+         _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
         
     }
 
+    func startRepeatingUpdates(){
+        
+        // Setup update timer for tech connections
+        _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateParameters), userInfo: nil, repeats: true)
+        
+    }
     //-------------------------------------------------------------------------
     // Actions
     //-------------------------------------------------------------------------
@@ -262,21 +281,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             return
         }
         
-        sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: "3520")
-        
-        /*
-         <1>units dectected</1>
-         <2>serial number</2>
-         <3>Unit number</3>
-         <4>unit ip</4>
-         <5>unit mac</5>
-         <6>unit port</6>
-         <7>dest ip</7>
-         <8>dest mac</8>
-         <9>this ip</9>
- 
- 
-        
         let thisIP = getIFAddresses()
         
         let dataString = "<1>\(units)</1>" +
@@ -311,8 +315,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         }
         
         sendPacket(body: sendString, ipAddString: "72.16.182.60", port: techPort)
-        
-        */
+ 
     }
     
     // -------------------------------
@@ -321,9 +324,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     func updateParameters(){
     
-        let nullStr:Character = "0"
-        let sendString = "^^IdX".padding(toLength: 24, withPad: String(nullStr), startingAt: 0)
-        sendPacket(body: sendString, ipAddString: "255.255.255.255", port: "3520")
+        sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: "3520")
         
     }
     
@@ -379,7 +380,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             tbv_comm.endUpdates()
         
         }
-        
         
     }
     
@@ -451,7 +451,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // -------------------------------------------------------------------------
     //                     Receive data from a UDP broadcast
     // -------------------------------------------------------------------------
-    
     func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         
         if let udpRecieved = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
@@ -668,8 +667,141 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                 
             }
             
+        }
+        
+        // ---------------------
+        // X COMMAND RECEIVED
+        // ---------------------
+        let length = data.count
+        if(length>89){
+            
+            // Make sure it is a CallerID X command packet
+            if(!(data[0]==94 && data[1]==94)){
+                return
+            }
+            
+            /*
+             <1>units dectected</1>
+             <2>serial number</2>
+             <3>Unit number</3>
+             <4>unit ip</4>
+             <5>unit mac</5>
+             <6>unit port</6>
+             <7>dest ip</7>
+             <8>dest mac</8>
+             <9>this ip</9>
+            */
+            
+            // Only one unit at a time
+            let unitsDetected = 1
+            
+            // Serial Number
+            var serial_number = "<ios device>"
+ 
+            // Unit Number
+            let unit_num_1 = data[57]
+            let unit_num_2 = data[58]
+            let unit_num_3 = data[59]
+            let unit_num_4 = data[60]
+            let unit_num_5 = data[61]
+            let unit_num_6 = data[62]
+            
+            let unit_number = String(unit_num_1) + String(unit_num_2) + String(unit_num_3) + String(unit_num_4) + String(unit_num_5) + String(unit_num_6)
+            tb_header.title = "EL Config - Unit Number: " + unit_number
+            
+            // Get UNIT IP address
+            let unit_ip_1 = data[33]
+            let unit_ip_2 = data[34]
+            let unit_ip_3 = data[35]
+            let unit_ip_4 = data[36]
+            
+            unit_ip = String(unit_ip_1) + "." + String(unit_ip_2) + "." + String(unit_ip_3) + "." + String(unit_ip_4)
+            tb_unit_ip.text = unit_ip
+            
+            // Get UNIT MAC address
+            var unit_mac_1 = String(format:"%X", data[24])
+            if(unit_mac_1.characters.count<2){
+                unit_mac_1 = "0" + unit_mac_1
+            }
+            
+            var unit_mac_2 = String(format:"%X", data[25])
+            if(unit_mac_2.characters.count<2){
+                unit_mac_2 = "0" + unit_mac_2
+            }
+            
+            var unit_mac_3 = String(format:"%X", data[26])
+            if(unit_mac_3.characters.count<2){
+                unit_mac_3 = "0" + unit_mac_3
+            }
+            
+            var unit_mac_4 = String(format:"%X", data[27])
+            if(unit_mac_4.characters.count<2){
+                unit_mac_4 = "0" + unit_mac_4
+            }
+            
+            var unit_mac_5 = String(format:"%X", data[28])
+            if(unit_mac_5.characters.count<2){
+                unit_mac_5 = "0" + unit_mac_5
+            }
+            
+            var unit_mac_6 = String(format:"%X", data[29])
+            if(unit_mac_6.characters.count<2){
+                unit_mac_6 = "0" + unit_mac_6
+            }
+            
+            unit_mac_address = unit_mac_1 + "-" + unit_mac_2 + "-" + unit_mac_3 + "-" + unit_mac_4 + "-" + unit_mac_5 + "-" + unit_mac_6
+            
+            // Unit PORT
+            let port_hex = String(format:"%X", data[52]) + String(format:"%X", data[53])
+            let port_int = Int(port_hex, radix: 16)
+            let port_i : Int = port_int!
+            dest_port = String(port_i)
+            
+            // Get Dest IP address
+            let dest_ip_1 = data[40]
+            let dest_ip_2 = data[41]
+            let dest_ip_3 = data[42]
+            let dest_ip_4 = data[43]
+            
+            dest_ip = String(dest_ip_1) + "." + String(dest_ip_2) + "." + String(dest_ip_3) + "." + String(dest_ip_4)
+            
+            // Get UNIT MAC address
+            var dest_mac_1 = String(format:"%X", data[66])
+            if(dest_mac_1.characters.count<2){
+                dest_mac_1 = "0" + dest_mac_1
+            }
+            
+            var dest_mac_2 = String(format:"%X", data[67])
+            if(dest_mac_2.characters.count<2){
+                dest_mac_2 = "0" + dest_mac_2
+            }
+            
+            var dest_mac_3 = String(format:"%X", data[68])
+            if(dest_mac_3.characters.count<2){
+                dest_mac_3 = "0" + dest_mac_3
+            }
+            
+            var dest_mac_4 = String(format:"%X", data[69])
+            if(dest_mac_4.characters.count<2){
+                dest_mac_4 = "0" + dest_mac_4
+            }
+            
+            var dest_mac_5 = String(format:"%X", data[70])
+            if(dest_mac_5.characters.count<2){
+                dest_mac_5 = "0" + dest_mac_5
+            }
+            
+            var dest_mac_6 = String(format:"%X", data[71])
+            if(dest_mac_6.characters.count<2){
+                dest_mac_6 = "0" + dest_mac_6
+            }
+            
+            dest_mac_address = dest_mac_1 + "-" + dest_mac_2 + "-" + dest_mac_3 + "-" + dest_mac_4 + "-" + dest_mac_5 + "-" + dest_mac_6
+            
+            techUpdate(units: unitsDetected, serial: serial_number, unitNumber: unit_number, unitIP: unit_ip, unitMAC: unit_mac_address, unitPort: dest_port, destIP: dest_ip, destMAC: dest_mac_address)
             
         }
+        
     }
     
     // -----------------
@@ -691,15 +823,21 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     //-----------------------------------
     // Lower level functions
     //-----------------------------------
+    func convertPointerToArray(length: Int, data: UnsafePointer<Int8>) -> [Int8] {
+        
+        let buffer = UnsafeBufferPointer(start: data, count: length);
+        return Array(buffer)
+        
+    }
     
-    func getIFAddresses() -> [String] {
+    func getIFAddresses() -> String {
         
         var addresses = [String]()
         
         // Get list of all interfaces on the local machine:
         var ifaddr : UnsafeMutablePointer<ifaddrs>?
-        guard getifaddrs(&ifaddr) == 0 else { return [] }
-        guard let firstAddr = ifaddr else { return [] }
+        guard getifaddrs(&ifaddr) == 0 else { return "unknown" }
+        guard let firstAddr = ifaddr else { return "unknown" }
         
         // For each interface ...
         for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
@@ -722,7 +860,20 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         }
         
         freeifaddrs(ifaddr)
-        return addresses
+        
+        for address in addresses {
+            
+            let ipPattern = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b"
+            let ipRegex = try! NSRegularExpression(pattern: ipPattern, options: [])
+            let ipMatches = ipRegex.matches(in: address, options: [], range: NSRange(location: 0, length: address.characters.count))
+            
+            if(ipMatches.count>0){
+                return address
+            }
+        }
+        
+        return "unknown"
+        
     }
 
 }
