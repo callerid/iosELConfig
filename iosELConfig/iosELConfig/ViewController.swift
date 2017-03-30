@@ -696,7 +696,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             let unitsDetected = 1
             
             // Serial Number
-            var serial_number = "<ios device>"
+            let serial_number = "<ios device>"
  
             // Unit Number
             let unit_num_1 = data[57]
@@ -707,7 +707,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             let unit_num_6 = data[62]
             
             let unit_number = String(unit_num_1) + String(unit_num_2) + String(unit_num_3) + String(unit_num_4) + String(unit_num_5) + String(unit_num_6)
-            tb_header.title = "EL Config - Unit Number: " + unit_number
             
             // Get UNIT IP address
             let unit_ip_1 = data[33]
