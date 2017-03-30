@@ -8,6 +8,7 @@
 
 import UIKit
 import CocoaAsyncSocket
+import QuartzCore
 
 class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
 
@@ -16,24 +17,49 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     //-----------------------------------------
     // LINK UI
     //-----------------------------------------
+    @IBOutlet weak var tb_header: UINavigationItem!
     
-    @IBOutlet weak var btn_e: UIButton!
     @IBOutlet weak var btn_c: UIButton!
     @IBOutlet weak var btn_a: UIButton!
-    @IBOutlet weak var btn_x: UIButton!
     @IBOutlet weak var btn_u: UIButton!
     @IBOutlet weak var btn_d: UIButton!
     @IBOutlet weak var btn_s: UIButton!
     @IBOutlet weak var btn_o: UIButton!
     @IBOutlet weak var btn_k: UIButton!
     @IBOutlet weak var btn_b: UIButton!
-    @IBOutlet weak var btn_t: UIButton!
+    
+    @IBOutlet weak var tb_unit_ip: UITextField!
+    
+    @IBOutlet weak var btn_t1: UIButton!
+    @IBOutlet weak var btn_t2: UIButton!
+    @IBOutlet weak var btn_t3: UIButton!
+    @IBOutlet weak var tb_code: UITextField!
+    @IBOutlet weak var lb_code: UILabel!
     
     @IBOutlet weak var tbv_comm: UITableView!
+    
+    // ----------------
+    // Globals
+    // ----------------
+    var unit_ip:String = "n/a"
+    var unit_mac_address:String = "n/a"
+    var dest_ip:String = "n/a"
+    var dest_mac_address:String = "n/a"
+    var dest_port = "n/a"
+    // ----------------
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        btn_t1.layer.cornerRadius = 10
+        btn_t1.clipsToBounds = true
+        
+        btn_t2.layer.cornerRadius = 10
+        btn_t2.clipsToBounds = true
+        
+        btn_t3.layer.cornerRadius = 10
+        btn_t3.clipsToBounds = true
         
         tbv_comm.dataSource = commdata_datasource_delegate
         tbv_comm.delegate = commdata_datasource_delegate
@@ -41,18 +67,265 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         startServer()
         
         // Startup with V command to load parameters
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
+        
+        // Setup update timer for tech connections
+         _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
         
     }
 
+    func startRepeatingUpdates(){
+        
+        // Setup update timer for tech connections
+        _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateParameters), userInfo: nil, repeats: true)
+        
+    }
     //-------------------------------------------------------------------------
     // Actions
     //-------------------------------------------------------------------------
-    
+    // -------------------
+    // Toggles
+    // -------------------
     @IBAction func btn_toggles_click(_ sender: Any) {
     
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
     
+    }
+    
+    @IBAction func c_click(_ sender: Any) {
+        
+        if(btn_c.titleLabel?.text=="c"){
+            command_click(command: "C")
+        }
+        else{
+            command_click(command: "c")
+        }
+        
+    }
+    
+    @IBAction func u_click(_ sender: Any) {
+        
+        if(btn_u.titleLabel?.text=="u"){
+            command_click(command: "U")
+        }
+        else{
+            command_click(command: "u")
+        }
+        
+    }
+    
+    @IBAction func d_click(_ sender: Any) {
+        
+        if(btn_d.titleLabel?.text=="d"){
+            command_click(command: "D")
+        }
+        else{
+            command_click(command: "d")
+        }
+        
+    }
+    
+    @IBAction func a_click(_ sender: Any) {
+        
+        if(btn_a.titleLabel?.text=="a"){
+            command_click(command: "A")
+        }
+        else{
+            command_click(command: "a")
+        }
+        
+    }
+    
+    @IBAction func s_click(_ sender: Any) {
+        
+        if(btn_s.titleLabel?.text=="s"){
+            command_click(command: "S")
+        }
+        else{
+            command_click(command: "s")
+        }
+        
+    }
+    
+    @IBAction func o_click(_ sender: Any) {
+        
+        if(btn_o.titleLabel?.text=="o"){
+            command_click(command: "O")
+        }
+        else{
+            command_click(command: "o")
+        }
+        
+    }
+    
+    @IBAction func b_click(_ sender: Any) {
+        
+        if(btn_b.titleLabel?.text=="b"){
+            command_click(command: "B")
+        }
+        else{
+            command_click(command: "b")
+        }
+        
+    }
+    
+    @IBAction func k_click(_ sender: Any) {
+        
+        if(btn_k.titleLabel?.text=="k"){
+            command_click(command: "K")
+        }
+        else{
+            command_click(command: "k")
+        }
+        
+    }
+    
+    // -------------------
+    // Tech connections
+    // -------------------
+    
+    var connectCode = "0000"
+    var connectToTech = 0
+    
+    @IBAction func t1_click(_ sender: Any) {
+        
+        connectToTech = 1
+        
+        btn_t1.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        btn_t1.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+        
+        btn_t2.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t2.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        btn_t3.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t3.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        tb_code.isHidden = false
+        lb_code.isHidden = false
+        
+    }
+    
+    @IBAction func t2_click(_ sender: Any) {
+        
+        connectToTech = 2
+        
+        btn_t2.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        btn_t2.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+        
+        btn_t1.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t1.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        btn_t3.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t3.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        tb_code.isHidden = false
+        lb_code.isHidden = false
+        
+    }
+    
+    @IBAction func t3_click(_ sender: Any) {
+        
+        connectToTech = 3
+        
+        btn_t3.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        btn_t3.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+        
+        btn_t2.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t2.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        btn_t1.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+        btn_t1.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+        
+        tb_code.isHidden = false
+        lb_code.isHidden = false
+        
+    }
+    
+    // UDP repeat of recevied data
+    func techRepeat(repeatString:String){
+        
+        if(connectToTech == 0) {
+            return
+        }
+        
+        let sendString = "<" + tb_code.text! + ">" + repeatString
+        
+        var techPort = "3520"
+        switch connectToTech {
+            
+        case 1:
+            techPort = "3531"
+            break
+            
+        case 2:
+            techPort = "3532"
+            break
+            
+        case 3:
+            techPort = "3534"
+            break
+            
+        default:
+            break
+        }
+        
+        sendPacket(body: sendString, ipAddString: "72.16.182.60", port: techPort)
+        
+        
+    }
+    
+    // UDP repeat of recevied data
+    func techUpdate(units:Int,serial:String,unitNumber:String,unitIP:String,unitMAC:String,unitPort:String,destIP:String,destMAC:String){
+        
+        if(connectToTech == 0) {
+            return
+        }
+        
+        let thisIP = getIFAddresses()
+        
+        let dataString = "<1>\(units)</1>" +
+        "<2>\(serial)</2>" +
+        "<3>\(unitNumber)</3>" +
+        "<4>\(unitIP)</4>" +
+        "<5>\(unitMAC)</5>" +
+        "<6>\(unitPort)</6>" +
+        "<7>\(destIP)</7>" +
+        "<8>\(destMAC)</8>" +
+        "<9>\(thisIP)</9>"
+        
+        let sendString = "<" + tb_code.text! + ">" + dataString
+        
+        var techPort = "3520"
+        switch connectToTech {
+            
+        case 1:
+            techPort = "3531"
+            break
+            
+        case 2:
+            techPort = "3532"
+            break
+            
+        case 3:
+            techPort = "3534"
+            break
+            
+        default:
+            break
+        }
+        
+        sendPacket(body: sendString, ipAddString: "72.16.182.60", port: techPort)
+ 
+    }
+    
+    // -------------------------------
+    // Update parameters
+    // -------------------------------
+    
+    func updateParameters(){
+    
+        sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: "3520")
+        
     }
     
     //-------------------------------------------------------------------------
@@ -70,14 +343,25 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     }
     
     @IBAction func v_click(_ sender: Any) {
-        command_click(command: "V")
+        
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
+        
     }
     
     func command_click(command:String){
         
         let commandStr = "^^Id-\(command)"
         
-        sendPacket(body: commandStr, ipAddString: "255.255.255.255")
+        sendPacket(body: commandStr, ipAddString: "255.255.255.255",port: "3520")
+        
+        _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getToggles), userInfo: nil, repeats: false)
+        
+        
+    }
+    
+    func getToggles() {
+        
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
         
     }
     
@@ -96,7 +380,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             tbv_comm.endUpdates()
         
         }
-        
         
     }
     
@@ -168,7 +451,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // -------------------------------------------------------------------------
     //                     Receive data from a UDP broadcast
     // -------------------------------------------------------------------------
-    
     func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         
         if let udpRecieved = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
@@ -290,9 +572,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         }
                     
                         // if got toggles then enable them
-                        btn_e.isEnabled = true
                         btn_c.isEnabled = true
-                        btn_x.isEnabled = true
                         btn_u.isEnabled = true
                         btn_d.isEnabled = true
                         btn_a.isEnabled = true
@@ -300,19 +580,8 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         btn_o.isEnabled = true
                         btn_b.isEnabled = true
                         btn_k.isEnabled = true
-                        btn_t.isEnabled = true
                     
                         // Update toggles
-                        btn_e.setTitle(e, for: .normal)
-                        if(e=="e"){
-                            btn_e.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_e.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_e.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_e.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
                         btn_c.setTitle(c, for: .normal)
                         if(c=="c"){
                             btn_c.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
@@ -321,16 +590,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         else{
                             btn_c.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
                             btn_c.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_x.setTitle(x, for: .normal)
-                        if(x=="x"){
-                            btn_x.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_x.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_x.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_x.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
                         }
                         
                         btn_u.setTitle(u, for: .normal)
@@ -402,82 +661,183 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                             btn_k.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
                             btn_k.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
                         }
-                        
-                        btn_t.setTitle(t, for: .normal)
-                        if(t=="t"){
-                            btn_t.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_t.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_t.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_t.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
                     
                     }
                 }
                 
             }
             
+        }
+        
+        // ---------------------
+        // X COMMAND RECEIVED
+        // ---------------------
+        let length = data.count
+        if(length>89){
+            
+            // Make sure it is a CallerID X command packet
+            if(!(data[0]==94 && data[1]==94)){
+                return
+            }
+            
+            /*
+             <1>units dectected</1>
+             <2>serial number</2>
+             <3>Unit number</3>
+             <4>unit ip</4>
+             <5>unit mac</5>
+             <6>unit port</6>
+             <7>dest ip</7>
+             <8>dest mac</8>
+             <9>this ip</9>
+            */
+            
+            // Only one unit at a time
+            let unitsDetected = 1
+            
+            // Serial Number
+            var serial_number = "<ios device>"
+ 
+            // Unit Number
+            let unit_num_1 = data[57]
+            let unit_num_2 = data[58]
+            let unit_num_3 = data[59]
+            let unit_num_4 = data[60]
+            let unit_num_5 = data[61]
+            let unit_num_6 = data[62]
+            
+            let unit_number = String(unit_num_1) + String(unit_num_2) + String(unit_num_3) + String(unit_num_4) + String(unit_num_5) + String(unit_num_6)
+            tb_header.title = "EL Config - Unit Number: " + unit_number
+            
+            // Get UNIT IP address
+            let unit_ip_1 = data[33]
+            let unit_ip_2 = data[34]
+            let unit_ip_3 = data[35]
+            let unit_ip_4 = data[36]
+            
+            unit_ip = String(unit_ip_1) + "." + String(unit_ip_2) + "." + String(unit_ip_3) + "." + String(unit_ip_4)
+            tb_unit_ip.text = unit_ip
+            
+            // Get UNIT MAC address
+            var unit_mac_1 = String(format:"%X", data[24])
+            if(unit_mac_1.characters.count<2){
+                unit_mac_1 = "0" + unit_mac_1
+            }
+            
+            var unit_mac_2 = String(format:"%X", data[25])
+            if(unit_mac_2.characters.count<2){
+                unit_mac_2 = "0" + unit_mac_2
+            }
+            
+            var unit_mac_3 = String(format:"%X", data[26])
+            if(unit_mac_3.characters.count<2){
+                unit_mac_3 = "0" + unit_mac_3
+            }
+            
+            var unit_mac_4 = String(format:"%X", data[27])
+            if(unit_mac_4.characters.count<2){
+                unit_mac_4 = "0" + unit_mac_4
+            }
+            
+            var unit_mac_5 = String(format:"%X", data[28])
+            if(unit_mac_5.characters.count<2){
+                unit_mac_5 = "0" + unit_mac_5
+            }
+            
+            var unit_mac_6 = String(format:"%X", data[29])
+            if(unit_mac_6.characters.count<2){
+                unit_mac_6 = "0" + unit_mac_6
+            }
+            
+            unit_mac_address = unit_mac_1 + "-" + unit_mac_2 + "-" + unit_mac_3 + "-" + unit_mac_4 + "-" + unit_mac_5 + "-" + unit_mac_6
+            
+            // Unit PORT
+            let port_hex = String(format:"%X", data[52]) + String(format:"%X", data[53])
+            let port_int = Int(port_hex, radix: 16)
+            let port_i : Int = port_int!
+            dest_port = String(port_i)
+            
+            // Get Dest IP address
+            let dest_ip_1 = data[40]
+            let dest_ip_2 = data[41]
+            let dest_ip_3 = data[42]
+            let dest_ip_4 = data[43]
+            
+            dest_ip = String(dest_ip_1) + "." + String(dest_ip_2) + "." + String(dest_ip_3) + "." + String(dest_ip_4)
+            
+            // Get UNIT MAC address
+            var dest_mac_1 = String(format:"%X", data[66])
+            if(dest_mac_1.characters.count<2){
+                dest_mac_1 = "0" + dest_mac_1
+            }
+            
+            var dest_mac_2 = String(format:"%X", data[67])
+            if(dest_mac_2.characters.count<2){
+                dest_mac_2 = "0" + dest_mac_2
+            }
+            
+            var dest_mac_3 = String(format:"%X", data[68])
+            if(dest_mac_3.characters.count<2){
+                dest_mac_3 = "0" + dest_mac_3
+            }
+            
+            var dest_mac_4 = String(format:"%X", data[69])
+            if(dest_mac_4.characters.count<2){
+                dest_mac_4 = "0" + dest_mac_4
+            }
+            
+            var dest_mac_5 = String(format:"%X", data[70])
+            if(dest_mac_5.characters.count<2){
+                dest_mac_5 = "0" + dest_mac_5
+            }
+            
+            var dest_mac_6 = String(format:"%X", data[71])
+            if(dest_mac_6.characters.count<2){
+                dest_mac_6 = "0" + dest_mac_6
+            }
+            
+            dest_mac_address = dest_mac_1 + "-" + dest_mac_2 + "-" + dest_mac_3 + "-" + dest_mac_4 + "-" + dest_mac_5 + "-" + dest_mac_6
+            
+            techUpdate(units: unitsDetected, serial: serial_number, unitNumber: unit_number, unitIP: unit_ip, unitMAC: unit_mac_address, unitPort: dest_port, destIP: dest_ip, destMAC: dest_mac_address)
             
         }
+        
     }
     
     // -----------------
     // Sending
     // -----------------
-    var _socketSend: GCDAsyncUdpSocket?
-    var socketSend: GCDAsyncUdpSocket? {
-        get {
-            if _socketSend == nil {
-                guard let port = UInt16("3520"), port > 0 else {
-                    return nil
-                }
-                let socketSend = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
-                do {
-                    try socketSend.enableBroadcast(true)
-                } catch _ as NSError {
-                    socketSend.close()
-                    return nil
-                }
-                _socketSend = socketSend
-            }
-            return _socketSend
-        }
-        set {
-            _socketSend?.close()
-            _socketSend = newValue
-        }
-    }
-    
-    deinit {
-        socketSend = nil
-    }
-    
-    func sendPacket(body: String,ipAddString:String){
+    func sendPacket(body: String,ipAddString:String,port:String){
         
         let host = ipAddString
-        let port = UInt16("3520")
+        let port = UInt16(port)
         
-        guard socketSend != nil else {
+        guard socket != nil else {
             return
         }
         
-        socketSend?.send(body.data(using: String.Encoding.utf8)!, toHost: host, port: port!, withTimeout: 2, tag: 0)
+        socket?.send(body.data(using: String.Encoding.utf8)!, toHost: host, port: port!, withTimeout: 2, tag: 0)
         
     }
     
     //-----------------------------------
     // Lower level functions
     //-----------------------------------
+    func convertPointerToArray(length: Int, data: UnsafePointer<Int8>) -> [Int8] {
+        
+        let buffer = UnsafeBufferPointer(start: data, count: length);
+        return Array(buffer)
+        
+    }
     
-    func getIFAddresses() -> [String] {
+    func getIFAddresses() -> String {
         
         var addresses = [String]()
         
         // Get list of all interfaces on the local machine:
         var ifaddr : UnsafeMutablePointer<ifaddrs>?
-        guard getifaddrs(&ifaddr) == 0 else { return [] }
-        guard let firstAddr = ifaddr else { return [] }
+        guard getifaddrs(&ifaddr) == 0 else { return "unknown" }
+        guard let firstAddr = ifaddr else { return "unknown" }
         
         // For each interface ...
         for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
@@ -500,7 +860,20 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         }
         
         freeifaddrs(ifaddr)
-        return addresses
+        
+        for address in addresses {
+            
+            let ipPattern = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b"
+            let ipRegex = try! NSRegularExpression(pattern: ipPattern, options: [])
+            let ipMatches = ipRegex.matches(in: address, options: [], range: NSRange(location: 0, length: address.characters.count))
+            
+            if(ipMatches.count>0){
+                return address
+            }
+        }
+        
+        return "unknown"
+        
     }
 
 }
