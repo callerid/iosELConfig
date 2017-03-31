@@ -30,6 +30,9 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBOutlet weak var tb_unit_ip: UITextField!
     
+    @IBOutlet weak var btn_retrieve_toggles: UIButton!
+    @IBOutlet weak var btn_adv_settings: UIButton!
+    
     @IBOutlet weak var btn_t1: UIButton!
     @IBOutlet weak var btn_t2: UIButton!
     @IBOutlet weak var btn_t3: UIButton!
@@ -51,6 +54,12 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        btn_retrieve_toggles.layer.cornerRadius = 10
+        btn_retrieve_toggles.clipsToBounds = true
+        
+        btn_adv_settings.layer.cornerRadius = 10
+        btn_adv_settings.clipsToBounds = true
         
         btn_t1.layer.cornerRadius = 10
         btn_t1.clipsToBounds = true
@@ -501,6 +510,20 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         callerId = udpRecieved.substring(with: result!.rangeAt(10))
                         
                     }
+                    
+                    // Log the call
+                    let betweenPadding = 1
+                    
+                    logCommData(data: lineNumber.padding(toLength: 3 + betweenPadding, withPad: " ", startingAt: 0) +
+                    inboundOrOutbound.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
+                    startOrEnd.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
+                    duration.padding(toLength: 6 + betweenPadding, withPad: " ", startingAt: 0) +
+                    ckSum.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
+                    callRing.padding(toLength: 4 + betweenPadding, withPad: " ", startingAt: 0) +
+                    callTime.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0) +
+                    phoneNumber.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0) +
+                    callerId.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0))
+                    
                 }
                 
                 // -----------------------------
