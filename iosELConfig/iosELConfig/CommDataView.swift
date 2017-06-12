@@ -21,6 +21,7 @@ class CommDataView: UITableView, UITableViewDataSource, UITableViewDelegate {
         let cell = UITableViewCell()
         
         cell.textLabel?.text = commData[indexPath.row]
+        cell.textLabel?.font = UIFont(name:"Courier", size:16)
         
         return cell
         
