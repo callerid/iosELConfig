@@ -41,6 +41,8 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBOutlet weak var tbv_comm: UITableView!
     
+    @IBOutlet weak var dtpSetTime: UIDatePicker!
+    
     // ----------------
     // Globals
     // ----------------
@@ -49,38 +51,59 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     var dest_ip:String = "n/a"
     var dest_mac_address:String = "n/a"
     var dest_port = "n/a"
+    var boxPort:String = "3520";
     // ----------------
     
+    
+    // ----------------
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        btn_retrieve_toggles.layer.cornerRadius = 10
-        btn_retrieve_toggles.clipsToBounds = true
-        
-        btn_adv_settings.layer.cornerRadius = 10
-        btn_adv_settings.clipsToBounds = true
-        
-        btn_t1.layer.cornerRadius = 10
-        btn_t1.clipsToBounds = true
-        
-        btn_t2.layer.cornerRadius = 10
-        btn_t2.clipsToBounds = true
-        
-        btn_t3.layer.cornerRadius = 10
-        btn_t3.clipsToBounds = true
-        
-        tbv_comm.dataSource = commdata_datasource_delegate
-        tbv_comm.delegate = commdata_datasource_delegate
+        if(btn_retrieve_toggles != nil){
+            
+            // Main Screen
+            btn_retrieve_toggles.layer.cornerRadius = 10
+            btn_retrieve_toggles.clipsToBounds = true
+            
+            btn_adv_settings.layer.cornerRadius = 10
+            btn_adv_settings.clipsToBounds = true
+            
+            btn_t1.layer.cornerRadius = 10
+            btn_t1.clipsToBounds = true
+            
+            btn_t2.layer.cornerRadius = 10
+            btn_t2.clipsToBounds = true
+            
+            btn_t3.layer.cornerRadius = 10
+            btn_t3.clipsToBounds = true
+            
+            tbv_comm.dataSource = commdata_datasource_delegate
+            tbv_comm.delegate = commdata_datasource_delegate
+            
+        }
+        else{
+            
+            // Advanced Settings
+            tb_dest_ip.addTarget(self, action: #selector(ViewController.tb_dest_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
+            
+            tb_dest_mac.addTarget(self, action: #selector(ViewController.tb_dest_mac_validation(txtField:)), for: UIControlEvents.editingChanged)
+            
+            tb_dest_port.addTarget(self, action: #selector(ViewController.tb_dest_port_validation(txtField:)), for: UIControlEvents.editingChanged)
+            
+            tb_unit_number.addTarget(self, action: #selector(ViewController.tb_unit_number_validation(txtField:)), for: UIControlEvents.editingChanged)
+            
+            
+        }
         
         startServer()
         
         // Startup with V command to load parameters
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: boxPort)
         
         // Setup update timer for tech connections
          _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
-        
+    
     }
 
     func startRepeatingUpdates(){
@@ -97,7 +120,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // -------------------
     @IBAction func btn_toggles_click(_ sender: Any) {
     
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: boxPort)
     
     }
     
@@ -283,6 +306,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
     }
     
+    
     // UDP repeat of recevied data
     func techUpdate(units:Int,serial:String,unitNumber:String,unitIP:String,unitMAC:String,unitPort:String,destIP:String,destMAC:String){
         
@@ -327,13 +351,358 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
  
     }
     
+    // --------------------
+    // Advanced Form
+    // --------------------
+    // -- Unit Number
+    @IBOutlet weak var tb_dest_ip: UITextField!
+    @IBOutlet weak var tb_dest_mac: UITextField!
+    @IBOutlet weak var tb_unit_number: UITextField!
+    @IBOutlet weak var tb_dest_port: UITextField!
+    @IBOutlet weak var lb_listening_port: UILabel!
+
+    // -------------------
+    // Editing restaints
+    // -------------------
+    
+    func tb_dest_ip_validation(txtField: UITextField){
+        
+        let text = txtField.text
+        let limit = 15
+        var newChar:String = ""
+        var preText:String = ""
+        
+        if(text?.characters.count == 0 || (text?.characters.count)! > limit) {
+            return
+        }
+        
+        if(text?.characters.count == 1){
+            
+            newChar = text!
+            preText = ""
+            
+        }
+        else{
+        
+            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
+            let endIndex:Int = (text?.characters.count)! - 1
+            let index = text?.index((text?.endIndex)!,offsetBy:(endIndex))
+            preText = (text?.substring(to: index!))!
+            
+        }
+        
+        let partsOfIP = text?.components(separatedBy: ".")
+        var valid:Bool = false
+        
+        if(partsOfIP?.count==1){
+            
+            let num = Int((partsOfIP?[0])!)
+            
+            if(num! > 0 && num! < 256){
+                valid = true
+            }
+            
+            
+        }
+        else if(partsOfIP?.count==2){
+            
+            let num1 = Int((partsOfIP?[0])!)
+            let num2 = Int((partsOfIP?[1])!)
+            
+            if(num1! > 0 && num1! < 256 &&
+                num2! > 0 && num2! < 256){
+                valid = true
+            }
+            
+        }
+        else if(partsOfIP?.count==3){
+            
+            let num1 = Int((partsOfIP?[0])!)
+            let num2 = Int((partsOfIP?[1])!)
+            let num3 = Int((partsOfIP?[2])!)
+            
+            if(num1! > 0 && num1! < 256 &&
+                num2! > 0 && num2! < 256 &&
+                num3! > 0 && num3! < 256){
+                valid = true
+            }
+            
+        }
+        else if(partsOfIP?.count==4){
+            
+            let num1 = Int((partsOfIP?[0])!)
+            let num2 = Int((partsOfIP?[1])!)
+            let num3 = Int((partsOfIP?[2])!)
+            let num4 = Int((partsOfIP?[3])!)
+            
+            if(num1! > 0 && num1! < 256 &&
+                num2! > 0 && num2! < 256 &&
+                num3! > 0 && num3! < 256 &&
+                num4! > 0 && num4! < 256){
+                valid = true
+            }
+            
+        }
+        else{
+            valid = false
+        }
+        
+        if(valid){
+            return
+        }else{
+            tb_dest_ip.text = preText
+        }
+        
+        
+    }
+    
+    func tb_dest_mac_validation(txtField: UITextField){
+        
+        let text = txtField.text
+        let limit = 17
+        var newChar:String = ""
+        
+        if(text?.characters.count == 0 || (text?.characters.count)! > limit) {
+            return
+        }
+        
+        if(text?.characters.count == 1){
+            
+            newChar = text!
+            
+        }
+        else{
+            
+            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
+            
+        }
+        
+    }
+    
+    func tb_unit_number_validation(txtField: UITextField){
+        
+        let text = txtField.text
+        let limit = 6
+        var preText:String = ""
+        
+        if(text?.characters.count == 0) {
+            return
+        }
+        
+        if(text?.characters.count == 1){
+            
+            preText = text!
+            
+        }
+        else{
+            
+            let endIndex:Int = (text?.characters.count)! - 1
+            let index = text?.index((text?.endIndex)!,offsetBy:(endIndex))
+            preText = (text?.substring(to: index!))!
+            
+        }
+        
+        if((text?.characters.count)! > limit) {
+            tb_unit_number.text = preText
+        }
+        
+        
+    }
+    func tb_dest_port_validation(txtField: UITextField){
+        
+        let text = txtField.text
+        let limit = 4
+        var preText:String = ""
+        
+        if(text?.characters.count == 0) {
+            return
+        }
+        
+        if(text?.characters.count == 1){
+            
+            preText = text!
+            
+        }
+        else{
+            
+            let endIndex:Int = (text?.characters.count)! - 1
+            let index = text?.index((text?.endIndex)!,offsetBy:(endIndex))
+            preText = (text?.substring(to: index!))!
+            
+        }
+        
+        if((text?.characters.count)! > limit) {
+            tb_dest_port.text = preText
+        }
+        
+    }
+    
+    // -------------------
+    // Changes
+    // -------------------
+    @IBAction func tb_unit_number_end_edit(_ sender: Any) {
+        
+        // Save unit number
+        var unitNumber = tb_unit_number.text
+        while((unitNumber?.characters.count)!<6){
+            unitNumber = "0" + unitNumber!;
+        }
+        
+        let destination_port = boxPort
+        
+        sendPacket(body: "^^IdU000000" + unitNumber!, ipAddString: "255.255.255.255", port: destination_port)
+        
+    }
+    @IBAction func tb_dest_ip_did_end(_ sender: Any) {
+        
+        // Save unit number
+        let hexIP = convertIPToHexString(ipAddress: tb_dest_ip.text!);
+        if(hexIP != "-1"){
+            
+            sendPacket(body: "^^IdD" + hexIP, ipAddString: "255.255.255.255", port: boxPort)//External IP
+            updateParameters();
+            
+        }else{
+            
+            // TODO: Show message that IP is in incorrect format
+            
+            
+        }
+        
+    }
+    @IBAction func tb_dest_mac_did_end(_ sender: Any) {
+        
+        // Save destination MAC
+        let macParts = tb_dest_mac.text?.components(separatedBy: "-")
+        var partsOfMac = Array(repeating: "", count: 6)
+        
+        var cnt = 0
+        for part in macParts!{
+            partsOfMac[cnt] = part.uppercased()
+            cnt += 1
+        }
+        
+        if(partsOfMac.count != 6){
+            
+            // TODO: popup incorrect format
+            
+            return;
+        }
+        
+        var hexMac:String = partsOfMac[0]
+        hexMac += "-" + partsOfMac[1]
+        hexMac += "-" + partsOfMac[2]
+        hexMac += "-" + partsOfMac[3]
+        hexMac += "-" + partsOfMac[4]
+        hexMac += "-" + partsOfMac[5]
+        
+        sendPacket(body: "^^IdC" + hexMac, ipAddString: "255.255.255.255", port: boxPort)//Destination MAC address
+        updateParameters();
+        
+    }
+    
+    @IBAction func tb_dest_port_did_end(_ sender: Any) {
+        
+        if Int(tb_dest_port.text!) != nil{
+            
+            let num = Int(tb_dest_port.text!)
+            
+            var hexPort = intToHex(num: num!)
+            
+            while(hexPort.characters.count<4){
+                hexPort = "0" + hexPort
+            }
+            
+            hexPort = hexPort.uppercased()
+            
+            sendPacket(body: "^^IdT" + hexPort, ipAddString: "255.255.255.255", port: boxPort)
+        
+            lb_listening_port.text = "Listening on port: " + tb_dest_port.text!
+            boxPort = tb_dest_port.text!
+            
+            
+            
+        }
+        else{
+            
+            // TODO: display error popup
+            
+        }
+        
+    }
+    
+    // Advanced - needed functions
+    func matches(for regex: String, in text: String) -> [String] {
+        
+        do {
+            let regex = try NSRegularExpression(pattern: regex)
+            let nsString = text as NSString
+            let results = regex.matches(in: text, range: NSRange(location: 0, length: nsString.length))
+            return results.map { nsString.substring(with: $0.range)}
+        } catch let error {
+            print("invalid regex: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    func intToHex(num:Int)->String{
+        
+        return String(format:"%2X", num)
+        
+    }
+    
+    func convertIPToHexString(ipAddress:String)->String{
+        
+        let partsOfIpAddress = ipAddress.components(separatedBy: ".")
+        
+        var allAreInts = true;
+        
+        var hexStrings = Array(repeating: "", count: 4)
+        
+        var cnt = 0
+        for ipPart in partsOfIpAddress{
+            
+            if let num = Int(ipPart){
+            
+                if(num > 255){
+                    return "-1"
+                }
+                hexStrings[cnt] = String(format:"%2X",num)
+                hexStrings[cnt] = hexStrings[cnt].uppercased()
+                
+                if(hexStrings[cnt].characters.count == 1){
+                    hexStrings[cnt] = "0" + hexStrings[cnt]
+                }
+                
+                cnt += 1
+                
+            }
+            else{
+                allAreInts = false
+            }
+            
+        }
+        
+        if(!allAreInts){
+            return "-1"
+        }
+        
+        return hexStrings[0] + hexStrings[1] + hexStrings[2] + hexStrings[3]
+        
+        
+    }
+    
+    
+    // --------------------
+    
     // -------------------------------
     // Update parameters
     // -------------------------------
     
     func updateParameters(){
     
-        sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: "3520")
+        let destination_port = boxPort
+        sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: destination_port)
         
     }
     
@@ -353,7 +722,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBAction func v_click(_ sender: Any) {
         
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: boxPort)
         
     }
     
@@ -361,7 +730,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         let commandStr = "^^Id-\(command)"
         
-        sendPacket(body: commandStr, ipAddString: "255.255.255.255",port: "3520")
+        sendPacket(body: commandStr, ipAddString: "255.255.255.255",port: boxPort)
         
         _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getToggles), userInfo: nil, repeats: false)
         
@@ -370,7 +739,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     func getToggles() {
         
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: "3520")
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: boxPort)
         
     }
     
@@ -418,14 +787,13 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     fileprivate func getNewSocket() -> GCDAsyncUdpSocket? {
         
-        // set port to CallerID.com port --> 3520
-        let port = UInt16(3520)
+        let port = UInt16(boxPort)
         
-        // Bind to CallerID.com port (3520)
         let sock = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         do {
             
-            try sock.bind(toPort: port)
+            try sock.enableReusePort(true)
+            try sock.bind(toPort: port!)
             try sock.enableBroadcast(true)
             
         } catch _ as NSError {
@@ -543,6 +911,12 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         detailedType = udpRecieved.substring(with: result!.rangeAt(2))
                         callTime = udpRecieved.substring(with: result!.rangeAt(3))
                         
+                        let betweenPadding = 1;
+                        
+                        logCommData(data: lineNumber.padding(toLength: 3 + betweenPadding, withPad: " ", startingAt: 0) +
+                        detailedType.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
+                            callTime.padding(toLength: 16, withPad: " ", startingAt: 0))
+                        
                     }
                 }
                 
@@ -594,95 +968,99 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                         
                         }
                     
-                        // if got toggles then enable them
-                        btn_c.isEnabled = true
-                        btn_u.isEnabled = true
-                        btn_d.isEnabled = true
-                        btn_a.isEnabled = true
-                        btn_s.isEnabled = true
-                        btn_o.isEnabled = true
-                        btn_b.isEnabled = true
-                        btn_k.isEnabled = true
-                    
-                        // Update toggles
-                        btn_c.setTitle(c, for: .normal)
-                        if(c=="c"){
-                            btn_c.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_c.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_c.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_c.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_u.setTitle(u, for: .normal)
-                        if(u=="u"){
-                            btn_u.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_u.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_u.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_u.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_d.setTitle(d, for: .normal)
-                        if(d=="d"){
-                            btn_d.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_d.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_d.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_d.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_a.setTitle(a, for: .normal)
-                        if(a=="a"){
-                            btn_a.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_a.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_a.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_a.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_s.setTitle(s, for: .normal)
-                        if(s=="s"){
-                            btn_s.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_s.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_s.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_s.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_o.setTitle(o, for: .normal)
-                        if(o=="o"){
-                            btn_o.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_o.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_o.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_o.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_b.setTitle(b, for: .normal)
-                        if(b=="b"){
-                            btn_b.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_b.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_b.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_b.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                        }
-                        
-                        btn_k.setTitle(k, for: .normal)
-                        if(k=="k"){
-                            btn_k.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                            btn_k.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                        }
-                        else{
-                            btn_k.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                            btn_k.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        if(btn_a != nil){
+                            
+                            // if got toggles then enable them
+                            btn_c.isEnabled = true
+                            btn_u.isEnabled = true
+                            btn_d.isEnabled = true
+                            btn_a.isEnabled = true
+                            btn_s.isEnabled = true
+                            btn_o.isEnabled = true
+                            btn_b.isEnabled = true
+                            btn_k.isEnabled = true
+                            
+                            // Update toggles
+                            btn_c.setTitle(c, for: .normal)
+                            if(c=="c"){
+                                btn_c.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                                btn_c.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                            }
+                            else{
+                                btn_c.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                                btn_c.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                            }
+                            
+                            btn_u.setTitle(u, for: .normal)
+                            if(u=="u"){
+                                btn_u.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                                btn_u.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                            }
+                            else{
+                                btn_u.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                                btn_u.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                            }
+                            
+                            btn_d.setTitle(d, for: .normal)
+                            if(d=="d"){
+                                btn_d.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                                btn_d.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                            }
+                            else{
+                                btn_d.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                                btn_d.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                            }
+                            
+                            btn_a.setTitle(a, for: .normal)
+                            if(a=="a"){
+                                btn_a.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                                btn_a.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                            }
+                            else{
+                                btn_a.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                                btn_a.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                            }
+                            
+                            btn_s.setTitle(s, for: .normal)
+                            if(s=="s"){
+                                btn_s.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                                btn_s.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                            }
+                            else{
+                                btn_s.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                                btn_s.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                            }
+                            
+                            btn_o.setTitle(o, for: .normal)
+                            if(o=="o"){
+                                btn_o.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                                btn_o.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                            }
+                            else{
+                                btn_o.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                                btn_o.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                            }
+                            
+                            btn_b.setTitle(b, for: .normal)
+                            if(b=="b"){
+                                btn_b.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                                btn_b.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                            }
+                            else{
+                                btn_b.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                                btn_b.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                            }
+                            
+                            btn_k.setTitle(k, for: .normal)
+                            if(k=="k"){
+                                btn_k.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                                btn_k.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                            }
+                            else{
+                                btn_k.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                                btn_k.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                            }
+                            
                         }
                     
                     }
@@ -730,6 +1108,14 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             let unit_num_6 = data[62]
             
             let unit_number = String(unit_num_1) + String(unit_num_2) + String(unit_num_3) + String(unit_num_4) + String(unit_num_5) + String(unit_num_6)
+            
+            if(tb_unit_number != nil){
+                
+                if(!(tb_unit_number?.isFocused)!){
+                    tb_unit_number?.text = unit_number
+                }
+                
+            }
             
             // Get UNIT IP address
             let unit_ip_1 = data[33]
