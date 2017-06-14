@@ -385,9 +385,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         else{
         
             newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
-            let endIndex:Int = (text?.characters.count)! - 1
-            let index = text?.index((text?.endIndex)!,offsetBy:(endIndex))
-            preText = (text?.substring(to: index!))!
+            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
             
         }
         
@@ -398,7 +396,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             
             let num = Int((partsOfIP?[0])!)
             
-            if(num! > 0 && num! < 256){
+            if(num! > -1 && num! < 256){
                 valid = true
             }
             
@@ -409,11 +407,17 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             let num1 = Int((partsOfIP?[0])!)
             let num2 = Int((partsOfIP?[1])!)
             
-            if(num1! > 0 && num1! < 256 &&
-                num2! > 0 && num2! < 256){
-                valid = true
+            if(num2 == nil){
+                if(num1! > -1 && num1! < 256){
+                    valid = true
+                }
             }
-            
+            else{
+                if(num1! > -1 && num1! < 256 &&
+                    num2! > -1 && num2! < 256){
+                    valid = true
+                }
+            }
         }
         else if(partsOfIP?.count==3){
             
@@ -421,12 +425,23 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             let num2 = Int((partsOfIP?[1])!)
             let num3 = Int((partsOfIP?[2])!)
             
-            if(num1! > 0 && num1! < 256 &&
-                num2! > 0 && num2! < 256 &&
-                num3! > 0 && num3! < 256){
-                valid = true
+            if(num2 == nil && num3 == nil){
+                valid = false
+            }else{
+                if(num3 == nil){
+                    if(num1! > -1 && num1! < 256 &&
+                        num2! > -1 && num2! < 256){
+                        valid = true
+                    }
+                }
+                else{
+                    if(num1! > -1 && num1! < 256 &&
+                        num2! > -1 && num2! < 256 &&
+                        num3! > -1 && num3! < 256){
+                        valid = true
+                    }
+                }
             }
-            
         }
         else if(partsOfIP?.count==4){
             
@@ -435,13 +450,26 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             let num3 = Int((partsOfIP?[2])!)
             let num4 = Int((partsOfIP?[3])!)
             
-            if(num1! > 0 && num1! < 256 &&
-                num2! > 0 && num2! < 256 &&
-                num3! > 0 && num3! < 256 &&
-                num4! > 0 && num4! < 256){
-                valid = true
+            if(num3 == nil && num4 == nil){
+                valid=false
             }
-            
+            else{
+                if(num4 == nil){
+                    if(num1! > -1 && num1! < 256 &&
+                        num2! > -1 && num2! < 256 &&
+                        num3! > -1 && num3! < 256){
+                        valid = true
+                    }
+                }
+                else{
+                    if(num1! > -1 && num1! < 256 &&
+                        num2! > -1 && num2! < 256 &&
+                        num3! > -1 && num3! < 256 &&
+                        num4! > -1 && num4! < 256){
+                        valid = true
+                    }
+                }
+            }
         }
         else{
             valid = false
