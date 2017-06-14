@@ -364,6 +364,10 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // -------------------
     // Editing restaints
     // -------------------
+    @IBAction func tb_dest_ip_undo(_ sender: Any) {
+        // Keep program from crashing on other non-entry inputs to text field
+        tb_dest_ip.undoManager?.removeAllActions()
+    }
     
     func tb_dest_ip_validation(txtField: UITextField){
         
@@ -387,6 +391,12 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
             preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
             
+        }
+        
+        let testChar = Int(newChar)
+        if(testChar == nil && newChar != "."){
+            txtField.text = preText
+            return
         }
         
         let partsOfIP = text?.components(separatedBy: ".")
@@ -478,7 +488,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         if(valid){
             return
         }else{
-            tb_dest_ip.text = preText
+            txtField.text = preText
         }
         
         
