@@ -670,7 +670,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     }
     @IBAction func tb_dest_ip_did_end(_ sender: Any) {
         
-        // Save unit number
+       // Save unit number
         let hexIP = convertIPToHexString(ipAddress: tb_dest_ip.text!);
         if(hexIP != "-1"){
             
@@ -679,8 +679,8 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             
         }else{
             
-            // TODO: Show message that IP is in incorrect format
-            
+            // Show message that IP is in incorrect format
+            showPopup(parent: self, title: "Invalid IP Address", message: "The IP Address you have entered is not a valid IP address. Please retry.",yesOrNo: false)
             
         }
         
@@ -699,8 +699,8 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         if(partsOfMac.count != 6){
             
-            // TODO: popup incorrect format
-            
+            // incorrect format
+            showPopup(parent: self, title: "MAC Invalid", message: "The MAC address you entered is invalid. Please retry.",yesOrNo: false)
             return;
         }
         
@@ -740,7 +740,8 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         }
         else{
             
-            // TODO: display error popup
+            // display error popup
+            showPopup(parent: self, title: "Invalid Port", message: "The port you entered is invalid. Please retry.",yesOrNo: false)
             
         }
         
@@ -807,6 +808,89 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
     }
     
+    @IBAction func btnResetELDefaults_Click(_ sender: Any) {
+        
+        showPopup(parent: self, title: "Reset Ethernet Defaults?", message: "Are you sure you wish to reset to Ethernet Link Defaults? This will take a moment.", yesOrNo: true)
+
+    }
+    
+    func resetEL(){
+        
+        //Destination IP
+        sendPacket(body: "^^IdDFFFFFFFF", ipAddString: "255.255.255.255", port: boxPort)
+        
+        sleep(1)
+        
+        //Unit ID
+        sendPacket(body: "^^IdU000000000001", ipAddString: "255.255.255.255", port: boxPort)
+        
+        sleep(1)
+        
+        //Internal IP
+        sendPacket(body: "^^IdIC0A8005A", ipAddString: "255.255.255.255", port: boxPort)
+        
+        sleep(1)
+        
+        //Destination MAC address
+        sendPacket(body: "^^IdCFFFFFFFFFFFF", ipAddString: "255.255.255.255", port: boxPort)
+        
+        sleep(1)
+        
+        //Internal MAC address
+        sendPacket(body: "^^IdM0620101332CC", ipAddString: "255.255.255.255", port: boxPort)
+        
+        sleep(1)
+        
+        //Port Number
+        sendPacket(body: "^^IdT0DC0", ipAddString: "255.255.255.255", port: boxPort)
+        
+        sleep(1)
+        
+        // Update
+        updateParameters();
+    }
+    
+    @IBAction func btnResetUnitDefaults_Click(_ sender: Any) {
+        
+        showPopup(parent: self, title: "Reset Unit Defaults?", message: "Are you sure you wish to reset to Unit Defaults? This will take a moment.", yesOrNo: true)
+
+        
+    }
+    
+    func resetUnit(){
+        
+        //External IP
+        sendPacket(body: "^^Id-N0000007701", ipAddString: "255.255.255.255", port: boxPort)
+        
+        sleep(1)
+        
+        //Reset
+        sendPacket(body: "^^Id-R", ipAddString: "255.255.255.255", port: boxPort)
+        
+        sleep(1)
+        
+        // Update
+        updateParameters();
+    }
+    
+    
+    // ---------------------------------------------------------------------
+    
+    
+    // ----------------------------
+    // POPUP
+    // ----------------------------
+    func showPopup(parent: UIViewController,title: String,message: String,yesOrNo: Bool){
+        
+        let popup = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "styBrdPopup") as! PopupView
+        
+        parent.addChildViewController(popup)
+        popup.view.frame = parent.view.frame
+        parent.view.addSubview(popup.view)
+        popup.didMove(toParentViewController: parent)
+        popup.setText(title: title, message: message, yesOrNo: yesOrNo)
+        
+    }
     
     // --------------------
     

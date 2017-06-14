@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043426B11EF1A8C80029A970 /* PopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043426B01EF1A8C80029A970 /* PopupView.swift */; };
 		048A80231E83FDD6008D9886 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048A80221E83FDD6008D9886 /* AppDelegate.swift */; };
 		048A80251E83FDD6008D9886 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048A80241E83FDD6008D9886 /* ViewController.swift */; };
 		048A80281E83FDD6008D9886 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 048A80261E83FDD6008D9886 /* Main.storyboard */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		043426B01EF1A8C80029A970 /* PopupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupView.swift; sourceTree = "<group>"; };
 		048A801F1E83FDD6008D9886 /* iosELConfig.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosELConfig.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		048A80221E83FDD6008D9886 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		048A80241E83FDD6008D9886 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				04C1597E1E859E91008E6C1F /* CommDataView.swift */,
 				048A80541E84032B008D9886 /* objectiveC.m */,
 				048A80531E84032B008D9886 /* iosELConfig-Bridging-Header.h */,
+				043426B01EF1A8C80029A970 /* PopupView.swift */,
 			);
 			path = iosELConfig;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 				048A80551E84032B008D9886 /* objectiveC.m in Sources */,
 				048A80251E83FDD6008D9886 /* ViewController.swift in Sources */,
 				048A80231E83FDD6008D9886 /* AppDelegate.swift in Sources */,
+				043426B11EF1A8C80029A970 /* PopupView.swift in Sources */,
 				04C1597F1E859E91008E6C1F /* CommDataView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
