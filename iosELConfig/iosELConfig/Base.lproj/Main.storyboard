@@ -60,6 +60,9 @@
                                                     <color key="textColor" red="0.16516572830000001" green="0.2489949437" blue="0.40131152850000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="tb_unit_ip_did_end:" destination="6cb-gn-HSN" eventType="editingDidEnd" id="xql-dg-M5Q"/>
+                                                    </connections>
                                                 </textField>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="01" borderStyle="roundedRect" textAlignment="center" minimumFontSize="24" translatesAutoresizingMaskIntoConstraints="NO" id="ZzA-x6-1lc">
                                                     <rect key="frame" x="555" y="31" width="92" height="30"/>
@@ -379,7 +382,6 @@
                 </tapGestureRecognizer>
                 <tapGestureRecognizer id="fqM-BM-Jyj" userLabel="btn_adv_click">
                     <connections>
-                        <action selector="btn_adv_setting_click:" destination="6cb-gn-HSN" id="2c2-k9-r8w"/>
                         <segue destination="4y4-3u-KXa" kind="show" id="AJt-Xh-5Ak"/>
                     </connections>
                 </tapGestureRecognizer>
@@ -475,6 +477,7 @@
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" autocorrectionType="no" spellCheckingType="no" keyboardAppearance="light" returnKeyType="done"/>
                                                     <connections>
                                                         <action selector="tb_dest_mac_did_end:" destination="4y4-3u-KXa" eventType="editingDidEnd" id="VNg-lX-2dZ"/>
+                                                        <action selector="tb_dest_mac_undo:" destination="4y4-3u-KXa" eventType="editingChanged" id="tyS-Bf-eF2"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>
@@ -506,6 +509,7 @@
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" keyboardAppearance="light" returnKeyType="done"/>
                                                     <connections>
                                                         <action selector="tb_unit_number_end_edit:" destination="4y4-3u-KXa" eventType="editingDidEnd" id="ySJ-eX-xl7"/>
+                                                        <action selector="tb_unit_number_undo:" destination="4y4-3u-KXa" eventType="editingChanged" id="Sdj-WB-idu"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>
@@ -536,6 +540,7 @@
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" keyboardAppearance="light" returnKeyType="done"/>
                                                     <connections>
                                                         <action selector="tb_dest_port_did_end:" destination="4y4-3u-KXa" eventType="editingDidEnd" id="eg8-0P-7jD"/>
+                                                        <action selector="tb_dest_port_undo:" destination="4y4-3u-KXa" eventType="editingChanged" id="JzY-yN-SwN"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>

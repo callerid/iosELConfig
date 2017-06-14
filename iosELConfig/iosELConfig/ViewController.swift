@@ -66,6 +66,8 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             btn_retrieve_toggles.layer.cornerRadius = 10
             btn_retrieve_toggles.clipsToBounds = true
             
+            tb_unit_ip.addTarget(self, action: #selector(ViewController.tb_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
+            
             btn_adv_settings.layer.cornerRadius = 10
             btn_adv_settings.clipsToBounds = true
             
@@ -85,7 +87,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         else{
             
             // Advanced Settings
-            tb_dest_ip.addTarget(self, action: #selector(ViewController.tb_dest_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
+            tb_dest_ip.addTarget(self, action: #selector(ViewController.tb_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
             
             tb_dest_mac.addTarget(self, action: #selector(ViewController.tb_dest_mac_validation(txtField:)), for: UIControlEvents.editingChanged)
             
@@ -368,8 +370,20 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         // Keep program from crashing on other non-entry inputs to text field
         tb_dest_ip.undoManager?.removeAllActions()
     }
+    @IBAction func tb_dest_mac_undo(_ sender: Any) {
+        // Keep program from crashing on other non-entry inputs to text field
+        tb_dest_mac.undoManager?.removeAllActions()
+    }
+    @IBAction func tb_unit_number_undo(_ sender: Any) {
+        // Keep program from crashing on other non-entry inputs to text field
+        tb_unit_number.undoManager?.removeAllActions()
+    }
+    @IBAction func tb_dest_port_undo(_ sender: Any) {
+        // Keep program from crashing on other non-entry inputs to text field
+        tb_dest_port.undoManager?.removeAllActions()
+    }
     
-    func tb_dest_ip_validation(txtField: UITextField){
+    func tb_ip_validation(txtField: UITextField){
         
         let text = txtField.text
         let limit = 15
@@ -499,20 +513,67 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         let text = txtField.text
         let limit = 17
         var newChar:String = ""
+        var preText:String = ""
         
-        if(text?.characters.count == 0 || (text?.characters.count)! > limit) {
+        if(text?.characters.count == 0) {
             return
         }
         
         if(text?.characters.count == 1){
             
             newChar = text!
+            preText = ""
             
         }
         else{
             
             newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
+            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
             
+        }
+        
+        if((text?.characters.count)! > limit){
+            txtField.text = preText
+            return
+        }
+        
+        let areMatches = matches(for: "[0-9A-Fa-f\\-]", in: newChar)
+        if(areMatches.count == 0){
+            txtField.text = preText
+            return
+        }
+
+        if(newChar == "-"){
+            if(text!.characters.count % 3 != 0){
+                txtField.text = preText
+                return
+            }
+        }
+        
+        let partsOfMac = text?.components(separatedBy: "-")
+        var valid:Bool = false
+        
+        if((partsOfMac?[(partsOfMac?.count)!-1].characters.count)! > 2){
+            txtField.text = preText
+            return
+        }
+        
+        for part in partsOfMac!{
+            
+            let isValid = matches(for: "[0-9A-Fa-f]{1,2}", in: part)
+            if(isValid.count > 0){
+                valid = true
+            }
+            
+        }
+        
+        // If valid input then return without cutting off last char
+        // If invalid cut off last char
+        if(valid){
+            return
+        }
+        else{
+            txtField.text = preText
         }
         
     }
@@ -521,6 +582,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         let text = txtField.text
         let limit = 6
+        var newChar:String = ""
         var preText:String = ""
         
         if(text?.characters.count == 0) {
@@ -529,19 +591,26 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         if(text?.characters.count == 1){
             
-            preText = text!
+            newChar = text!
+            preText = ""
             
         }
         else{
             
-            let endIndex:Int = (text?.characters.count)! - 1
-            let index = text?.index((text?.endIndex)!,offsetBy:(endIndex))
-            preText = (text?.substring(to: index!))!
+            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
+            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
             
         }
         
-        if((text?.characters.count)! > limit) {
-            tb_unit_number.text = preText
+        if((text?.characters.count)! > limit){
+            txtField.text = preText
+            return
+        }
+        
+        let areMatches = matches(for: "[0-9]", in: newChar)
+        if(areMatches.count == 0){
+            txtField.text = preText
+            return
         }
         
         
@@ -550,6 +619,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         let text = txtField.text
         let limit = 4
+        var newChar:String = ""
         var preText:String = ""
         
         if(text?.characters.count == 0) {
@@ -558,19 +628,26 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         if(text?.characters.count == 1){
             
-            preText = text!
+            newChar = text!
+            preText = ""
             
         }
         else{
             
-            let endIndex:Int = (text?.characters.count)! - 1
-            let index = text?.index((text?.endIndex)!,offsetBy:(endIndex))
-            preText = (text?.substring(to: index!))!
+            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
+            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
             
         }
         
-        if((text?.characters.count)! > limit) {
-            tb_dest_port.text = preText
+        if((text?.characters.count)! > limit){
+            txtField.text = preText
+            return
+        }
+        
+        let areMatches = matches(for: "[0-9]", in: newChar)
+        if(areMatches.count == 0){
+            txtField.text = preText
+            return
         }
         
     }
