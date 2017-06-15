@@ -986,13 +986,14 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     fileprivate func getNewSocket() -> GCDAsyncUdpSocket? {
         
-        let port = UInt16(boxPort)
+        // set port to CallerID.com port --> 3520
+        let port = UInt16(3520)
         
+        // Bind to CallerID.com port (3520)
         let sock = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         do {
             
-            try sock.enableReusePort(true)
-            try sock.bind(toPort: port!)
+            try sock.bind(toPort: port)
             try sock.enableBroadcast(true)
             
         } catch _ as NSError {
@@ -1029,242 +1030,248 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // -------------------------------------------------------------------------
     func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         
-        if let udpRecieved = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
+        if let udpRecieved = NSString(data: data, encoding: String.Encoding.ascii.rawValue) {
             
-            // parse and handle udp data----------------------------------------------
-            
-            // declare used variables for matching
-            var lineNumber = "n/a"
-            var startOrEnd = "n/a"
-            var inboundOrOutbound = "n/a"
-            var duration = "n/a"
-            var ckSum = "B"
-            var callRing = "n/a"
-            var callTime = "01/01 0:00:00"
-            var phoneNumber = "n/a"
-            var callerId = "n/a"
-            var detailedType = "n/a"
-            
-            // define CallerID.com regex strings used for parsing CallerID.com hardware formats
-            let callRecordPattern = ".*(\\d\\d) ([IO]) ([ES]) (\\d{4}) ([GB]) (.)(\\d) (\\d\\d/\\d\\d \\d\\d:\\d\\d [AP]M) (.{8,15})(.*)"
-            let detailedPattern = ".*(\\d\\d) ([NFR]) {13}(\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)"
-            
-            let callRecordRegex = try! NSRegularExpression(pattern: callRecordPattern, options: [])
-            let detailedRegex = try! NSRegularExpression(pattern: detailedPattern, options: [])
-            
-            // get matches for regular expressions
-            let callRecordMatches = callRecordRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
-            let detailedMatches = detailedRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
-            
-            // look at call record matches first to determine if call record
-            if(callRecordMatches.count>0){
+            if(udpRecieved.length>10){
                 
-                // IS CALL RECORD
-                // -- get groups out of regex
-                callRecordRegex.enumerateMatches(in: udpRecieved as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:udpRecieved.length))
-                {(result : NSTextCheckingResult?, _, _) in
-                    let capturedRange = result!.rangeAt(1)
-                    if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
-                        
-                        lineNumber = udpRecieved.substring(with: result!.rangeAt(1))
-                        inboundOrOutbound = udpRecieved.substring(with: result!.rangeAt(2))
-                        startOrEnd = udpRecieved.substring(with: result!.rangeAt(3))
-                        duration = udpRecieved.substring(with: result!.rangeAt(4))
-                        ckSum = udpRecieved.substring(with: result!.rangeAt(5))
-                        callRing = udpRecieved.substring(with: result!.rangeAt(6)) + udpRecieved.substring(with: result!.rangeAt(7))
-                        callTime = udpRecieved.substring(with: result!.rangeAt(8))
-                        phoneNumber = udpRecieved.substring(with: result!.rangeAt(9))
-                        callerId = udpRecieved.substring(with: result!.rangeAt(10))
-                        
-                    }
+                // parse and handle udp data----------------------------------------------
+                // declare used variables for matching
+                var lineNumber = "n/a"
+                var startOrEnd = "n/a"
+                var inboundOrOutbound = "n/a"
+                var duration = "n/a"
+                var ckSum = "B"
+                var callRing = "n/a"
+                var callTime = "01/01 0:00:00"
+                var phoneNumber = "n/a"
+                var callerId = "n/a"
+                var detailedType = "n/a"
+                
+                // define CallerID.com regex strings used for parsing CallerID.com hardware formats
+                let callRecordPattern = ".*(\\d\\d) ([IO]) ([ES]) (\\d{4}) ([GB]) (.)(\\d) (\\d\\d/\\d\\d \\d\\d:\\d\\d [AP]M) (.{8,15})(.*)"
+                let detailedPattern = ".*(\\d\\d) ([NFR]) {13}(\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)"
+                
+                let callRecordRegex = try! NSRegularExpression(pattern: callRecordPattern, options: [])
+                let detailedRegex = try! NSRegularExpression(pattern: detailedPattern, options: [])
+                
+                // get matches for regular expressions
+                let callRecordMatches = callRecordRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
+                let detailedMatches = detailedRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
+                
+                // look at call record matches first to determine if call record
+                if(callRecordMatches.count>0){
                     
-                    // Log the call
-                    let betweenPadding = 1
-                    
-                    logCommData(data: lineNumber.padding(toLength: 3 + betweenPadding, withPad: " ", startingAt: 0) +
-                    inboundOrOutbound.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
-                    startOrEnd.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
-                    duration.padding(toLength: 6 + betweenPadding, withPad: " ", startingAt: 0) +
-                    ckSum.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
-                    callRing.padding(toLength: 4 + betweenPadding, withPad: " ", startingAt: 0) +
-                    callTime.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0) +
-                    phoneNumber.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0) +
-                    callerId.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0))
-                    
-                }
-                
-                // -----------------------------
-                
-            }
-            
-            // look at detail matches if detailed record
-            if(detailedMatches.count>0){
-                
-                // IS DETAILED RECORD
-                detailedRegex.enumerateMatches(in: udpRecieved as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:udpRecieved.length))
-                {(result : NSTextCheckingResult?, _, _) in
-                    let capturedRange = result!.rangeAt(1)
-                    if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
-                        
-                        lineNumber = udpRecieved.substring(with: result!.rangeAt(1))
-                        detailedType = udpRecieved.substring(with: result!.rangeAt(2))
-                        callTime = udpRecieved.substring(with: result!.rangeAt(3))
-                        
-                        let betweenPadding = 1;
-                        
-                        logCommData(data: lineNumber.padding(toLength: 3 + betweenPadding, withPad: " ", startingAt: 0) +
-                        detailedType.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
-                            callTime.padding(toLength: 16, withPad: " ", startingAt: 0))
-                        
-                    }
-                }
-                
-            }
-            
-            // If comm data then log
-            if(lineNumber=="n/a"){
-                
-                let commPattern = "([Ee])([Cc])([Xx])([Uu])([Dd])([Aa])([Ss])([Oo])([Bb])([Kk])([Tt]) L=(\\d{1,2}) (\\d{1,2}/\\d{1,2} (\\d{1,2}:\\d{1,2}:\\d{1,2}))"
-                let commRegex = try! NSRegularExpression(pattern: commPattern, options: [])
-                let commMatches = commRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
-                
-                if(commMatches.count>0){
-                    
-                    var recData = "n/a"
-                    var e = "n/a"
-                    var c = "n/a"
-                    var x = "n/a"
-                    var u = "n/a"
-                    var d = "n/a"
-                    var a = "n/a"
-                    var s = "n/a"
-                    var o = "n/a"
-                    var b = "n/a"
-                    var k = "n/a"
-                    var t = "n/a"
-                    var line = "n/a"
-                    var date = "n/a"
-                    
-                    commRegex.enumerateMatches(in: udpRecieved as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:udpRecieved.length))
+                    // IS CALL RECORD
+                    // -- get groups out of regex
+                    callRecordRegex.enumerateMatches(in: udpRecieved as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:udpRecieved.length))
                     {(result : NSTextCheckingResult?, _, _) in
                         let capturedRange = result!.rangeAt(1)
                         if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
-                        
-                            recData = udpRecieved.substring(with: result!.rangeAt(0))
-                            e = udpRecieved.substring(with: result!.rangeAt(1))
-                            c = udpRecieved.substring(with: result!.rangeAt(2))
-                            x = udpRecieved.substring(with: result!.rangeAt(3))
-                            u = udpRecieved.substring(with: result!.rangeAt(4))
-                            d = udpRecieved.substring(with: result!.rangeAt(5))
-                            a = udpRecieved.substring(with: result!.rangeAt(6))
-                            s = udpRecieved.substring(with: result!.rangeAt(7))
-                            o = udpRecieved.substring(with: result!.rangeAt(8))
-                            b = udpRecieved.substring(with: result!.rangeAt(9))
-                            k = udpRecieved.substring(with: result!.rangeAt(10))
-                            t = udpRecieved.substring(with: result!.rangeAt(11))
-                            line = udpRecieved.substring(with: result!.rangeAt(12))
-                            date = udpRecieved.substring(with: result!.rangeAt(13))
-                        
-                        }
-                    
-                        if(btn_a != nil){
                             
-                            // if got toggles then enable them
-                            btn_c.isEnabled = true
-                            btn_u.isEnabled = true
-                            btn_d.isEnabled = true
-                            btn_a.isEnabled = true
-                            btn_s.isEnabled = true
-                            btn_o.isEnabled = true
-                            btn_b.isEnabled = true
-                            btn_k.isEnabled = true
-                            
-                            // Update toggles
-                            btn_c.setTitle(c, for: .normal)
-                            if(c=="c"){
-                                btn_c.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                                btn_c.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                            }
-                            else{
-                                btn_c.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                                btn_c.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                            }
-                            
-                            btn_u.setTitle(u, for: .normal)
-                            if(u=="u"){
-                                btn_u.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                                btn_u.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                            }
-                            else{
-                                btn_u.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                                btn_u.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                            }
-                            
-                            btn_d.setTitle(d, for: .normal)
-                            if(d=="d"){
-                                btn_d.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                                btn_d.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                            }
-                            else{
-                                btn_d.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                                btn_d.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                            }
-                            
-                            btn_a.setTitle(a, for: .normal)
-                            if(a=="a"){
-                                btn_a.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                                btn_a.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                            }
-                            else{
-                                btn_a.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                                btn_a.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                            }
-                            
-                            btn_s.setTitle(s, for: .normal)
-                            if(s=="s"){
-                                btn_s.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                                btn_s.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                            }
-                            else{
-                                btn_s.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                                btn_s.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                            }
-                            
-                            btn_o.setTitle(o, for: .normal)
-                            if(o=="o"){
-                                btn_o.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                                btn_o.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                            }
-                            else{
-                                btn_o.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                                btn_o.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                            }
-                            
-                            btn_b.setTitle(b, for: .normal)
-                            if(b=="b"){
-                                btn_b.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                                btn_b.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                            }
-                            else{
-                                btn_b.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                                btn_b.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                            }
-                            
-                            btn_k.setTitle(k, for: .normal)
-                            if(k=="k"){
-                                btn_k.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-                                btn_k.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
-                            }
-                            else{
-                                btn_k.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
-                                btn_k.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
-                            }
+                            lineNumber = udpRecieved.substring(with: result!.rangeAt(1))
+                            inboundOrOutbound = udpRecieved.substring(with: result!.rangeAt(2))
+                            startOrEnd = udpRecieved.substring(with: result!.rangeAt(3))
+                            duration = udpRecieved.substring(with: result!.rangeAt(4))
+                            ckSum = udpRecieved.substring(with: result!.rangeAt(5))
+                            callRing = udpRecieved.substring(with: result!.rangeAt(6)) + udpRecieved.substring(with: result!.rangeAt(7))
+                            callTime = udpRecieved.substring(with: result!.rangeAt(8))
+                            phoneNumber = udpRecieved.substring(with: result!.rangeAt(9))
+                            callerId = udpRecieved.substring(with: result!.rangeAt(10))
                             
                         }
-                    
+                        
+                        // Log the call
+                        let betweenPadding = 1
+                        
+                        logCommData(data: lineNumber.padding(toLength: 3 + betweenPadding, withPad: " ", startingAt: 0) +
+                            inboundOrOutbound.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
+                            startOrEnd.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
+                            duration.padding(toLength: 6 + betweenPadding, withPad: " ", startingAt: 0) +
+                            ckSum.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
+                            callRing.padding(toLength: 4 + betweenPadding, withPad: " ", startingAt: 0) +
+                            callTime.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0) +
+                            phoneNumber.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0) +
+                            callerId.padding(toLength: 16 + betweenPadding, withPad: " ", startingAt: 0))
+                        
                     }
+                    
+                    // -----------------------------
+                    
                 }
                 
+                // look at detail matches if detailed record
+                if(detailedMatches.count>0){
+                    
+                    // IS DETAILED RECORD
+                    detailedRegex.enumerateMatches(in: udpRecieved as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:udpRecieved.length))
+                    {(result : NSTextCheckingResult?, _, _) in
+                        let capturedRange = result!.rangeAt(1)
+                        if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
+                            
+                            lineNumber = udpRecieved.substring(with: result!.rangeAt(1))
+                            detailedType = udpRecieved.substring(with: result!.rangeAt(2))
+                            callTime = udpRecieved.substring(with: result!.rangeAt(3))
+                            
+                            let betweenPadding = 1;
+                            
+                            logCommData(data: lineNumber.padding(toLength: 3 + betweenPadding, withPad: " ", startingAt: 0) +
+                                detailedType.padding(toLength: 2 + betweenPadding, withPad: " ", startingAt: 0) +
+                                callTime.padding(toLength: 16, withPad: " ", startingAt: 0))
+                            
+                        }
+                    }
+                    
+                }
+                
+            }
+            
+            
+        }
+        
+        // If comm data then log
+        if(data.count > 10){
+            
+            let udpRecieved = NSString(data: data, encoding: String.Encoding.ascii.rawValue)
+            
+            let commPattern = "([Ee])([Cc])([Xx])([Uu])([Dd])([Aa])([Ss])([Oo])([Bb])([Kk])([Tt]) L=(\\d{1,2}) (\\d{1,2}/\\d{1,2} (\\d{1,2}:\\d{1,2}:\\d{1,2}))"
+            let commRegex = try! NSRegularExpression(pattern: commPattern, options: [])
+            let commMatches = commRegex.matches(in: udpRecieved! as String, options: [], range: NSRange(location: 0, length: (udpRecieved?.length)!))
+            
+            if(commMatches.count>0){
+                
+                var recData = "n/a"
+                var e = "n/a"
+                var c = "n/a"
+                var x = "n/a"
+                var u = "n/a"
+                var d = "n/a"
+                var a = "n/a"
+                var s = "n/a"
+                var o = "n/a"
+                var b = "n/a"
+                var k = "n/a"
+                var t = "n/a"
+                var line = "n/a"
+                var date = "n/a"
+                
+                commRegex.enumerateMatches(in: udpRecieved! as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:(udpRecieved?.length)!))
+                {(result : NSTextCheckingResult?, _, _) in
+                    let capturedRange = result!.rangeAt(1)
+                    if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
+                        
+                        recData = (udpRecieved?.substring(with: result!.rangeAt(0)))!
+                        e = (udpRecieved?.substring(with: result!.rangeAt(1)))!
+                        c = (udpRecieved?.substring(with: result!.rangeAt(2)))!
+                        x = (udpRecieved?.substring(with: result!.rangeAt(3)))!
+                        u = (udpRecieved?.substring(with: result!.rangeAt(4)))!
+                        d = (udpRecieved?.substring(with: result!.rangeAt(5)))!
+                        a = (udpRecieved?.substring(with: result!.rangeAt(6)))!
+                        s = (udpRecieved?.substring(with: result!.rangeAt(7)))!
+                        o = (udpRecieved?.substring(with: result!.rangeAt(8)))!
+                        b = (udpRecieved?.substring(with: result!.rangeAt(9)))!
+                        k = (udpRecieved?.substring(with: result!.rangeAt(10)))!
+                        t = (udpRecieved?.substring(with: result!.rangeAt(11)))!
+                        line = (udpRecieved?.substring(with: result!.rangeAt(12)))!
+                        date = (udpRecieved?.substring(with: result!.rangeAt(13)))!
+                        
+                    }
+                    
+                    if(btn_a != nil){
+                        
+                        // if got toggles then enable them
+                        btn_c.isEnabled = true
+                        btn_u.isEnabled = true
+                        btn_d.isEnabled = true
+                        btn_a.isEnabled = true
+                        btn_s.isEnabled = true
+                        btn_o.isEnabled = true
+                        btn_b.isEnabled = true
+                        btn_k.isEnabled = true
+                        
+                        // Update toggles
+                        btn_c.setTitle(c, for: .normal)
+                        if(c=="c"){
+                            btn_c.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_c.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_c.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_c.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_u.setTitle(u, for: .normal)
+                        if(u=="u"){
+                            btn_u.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_u.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_u.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_u.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_d.setTitle(d, for: .normal)
+                        if(d=="d"){
+                            btn_d.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_d.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_d.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_d.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_a.setTitle(a, for: .normal)
+                        if(a=="a"){
+                            btn_a.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_a.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_a.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_a.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_s.setTitle(s, for: .normal)
+                        if(s=="s"){
+                            btn_s.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_s.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_s.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_s.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_o.setTitle(o, for: .normal)
+                        if(o=="o"){
+                            btn_o.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_o.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_o.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_o.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_b.setTitle(b, for: .normal)
+                        if(b=="b"){
+                            btn_b.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_b.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_b.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_b.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                        btn_k.setTitle(k, for: .normal)
+                        if(k=="k"){
+                            btn_k.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+                            btn_k.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+                        }
+                        else{
+                            btn_k.setTitleColor(#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1), for: .normal)
+                            btn_k.backgroundColor = #colorLiteral(red: 0.1651657283, green: 0.2489949437, blue: 0.4013115285, alpha: 1)
+                        }
+                        
+                    }
+                    
+                }
             }
             
         }
@@ -1273,7 +1280,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         // X COMMAND RECEIVED
         // ---------------------
         let length = data.count
-        if(length>89){
+        if(length > 85){
             
             // Make sure it is a CallerID X command packet
             if(!(data[0]==94 && data[1]==94)){
