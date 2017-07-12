@@ -141,14 +141,16 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         tbv_comm.dataSource = commdata_datasource_delegate
         tbv_comm.delegate = commdata_datasource_delegate
         
-        startServer()
-        
         // Startup with V command to load parameters
         sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
         
         // Setup update timer for tech connections
          _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        startServer()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -517,13 +519,13 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     fileprivate func getNewSocket() -> GCDAsyncUdpSocket? {
         
         // set port to CallerID.com port --> 3520
-        let port = UInt16(3520)
+        let port = UInt16(ViewController.boxPort)
         
         // Bind to CallerID.com port (3520)
         let sock = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         do {
             
-            try sock.bind(toPort: port)
+            try sock.bind(toPort: port!)
             try sock.enableBroadcast(true)
             
         } catch _ as NSError {
@@ -537,6 +539,9 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     fileprivate func startServer() {
         
         do {
+            if(socket?.isClosed())!{
+                socket = getNewSocket()
+            }
             try socket?.beginReceiving()
         } catch _ as NSError {
             

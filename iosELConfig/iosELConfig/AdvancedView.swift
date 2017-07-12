@@ -670,13 +670,13 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     fileprivate func getNewSocket() -> GCDAsyncUdpSocket? {
         
         // set port to CallerID.com port --> 3520
-        let port = UInt16(3520)
+        let port = UInt16(ViewController.boxPort)
         
         // Bind to CallerID.com port (3520)
         let sock = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         do {
             
-            try sock.bind(toPort: port)
+            try sock.bind(toPort: port!)
             try sock.enableBroadcast(true)
             
         } catch _ as NSError {
