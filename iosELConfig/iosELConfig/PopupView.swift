@@ -39,12 +39,12 @@ class PopupView: UIViewController {
         
         if(pubMessage.lowercased().contains("reset") &&
             pubMessage.lowercased().contains("ethernet")){
-            ViewController().resetEL()
+            AdvancedView().resetEL()
             
         }
         else if(pubMessage.lowercased().contains("reset") &&
             pubMessage.lowercased().contains("unit")){
-            ViewController().resetUnit()
+            AdvancedView().resetUnit()
         }
         
         self.view.removeFromSuperview()

@@ -10,7 +10,7 @@ import UIKit
 import CocoaAsyncSocket
 import QuartzCore
 
-class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
+class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate, GCDAsyncUdpSocketDelegate {
 
     let commdata_datasource_delegate = CommDataView()
     
@@ -43,69 +43,116 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBOutlet weak var dtpSetTime: UIDatePicker!
     
+    @IBOutlet weak var pickerLineCount: UIPickerView!
+    
     // ----------------
     // Globals
     // ----------------
-    var unit_ip:String = "n/a"
-    var unit_mac_address:String = "n/a"
-    var dest_ip:String = "n/a"
-    var dest_mac_address:String = "n/a"
-    var dest_port = "n/a"
-    var boxPort:String = "3520";
+    var pickerDataSource = ["1","5","9","17","21","25","33"]
+    static var onAdvanced:Bool = false
+    static var boxPort:String = "3520";
     // ----------------
     
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerDataSource.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+        
+        let titleData = pickerDataSource[row]
+        let myTitle = NSAttributedString(string: titleData, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 15.0)!,NSForegroundColorAttributeName:#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1)])
+        
+        return myTitle
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        
+        // update line count
+        var sendString:String = ""
+        switch (pickerDataSource[row]){
+            
+            case "1":
+                sendString = "^^Id-N0000007701\r\n"
+            break
+            
+            case "5":
+                sendString = "^^Id-N0000007705\r\n"
+            break
+            
+            case "9":
+                sendString = "^^Id-N0000007709\r\n"
+            break
+            
+            case "17":
+                sendString = "^^Id-N0000007711\r\n"
+            break
+            
+            case "21":
+                sendString = "^^Id-N0000007715\r\n"
+            break
+            
+            case "25":
+                sendString = "^^Id-N0000007719\r\n"
+            break
+            
+            case "33":
+                sendString = "^^Id-N0000007721\r\n"
+            break
+            
+            default:
+                sendString = "^^Id-N0000007701\r\n"
+            break
+        }
+        
+        sendPacket(body: sendString, ipAddString: "255.255.255.255", port: ViewController.boxPort)
+        
+    }
     
     // ----------------
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        if(btn_retrieve_toggles != nil){
+        // Main Screen
+        pickerLineCount.dataSource = self
+        pickerLineCount.delegate = self
             
-            // Main Screen
-            btn_retrieve_toggles.layer.cornerRadius = 10
-            btn_retrieve_toggles.clipsToBounds = true
+        btn_retrieve_toggles.layer.cornerRadius = 10
+        btn_retrieve_toggles.clipsToBounds = true
             
-            tb_unit_ip.addTarget(self, action: #selector(ViewController.tb_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
+        tb_unit_ip.addTarget(self, action: #selector(AdvancedView.tb_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
+        
+        btn_adv_settings.layer.cornerRadius = 10
+        btn_adv_settings.clipsToBounds = true
             
-            btn_adv_settings.layer.cornerRadius = 10
-            btn_adv_settings.clipsToBounds = true
+        btn_t1.layer.cornerRadius = 10
+        btn_t1.clipsToBounds = true
             
-            btn_t1.layer.cornerRadius = 10
-            btn_t1.clipsToBounds = true
+        btn_t2.layer.cornerRadius = 10
+        btn_t2.clipsToBounds = true
             
-            btn_t2.layer.cornerRadius = 10
-            btn_t2.clipsToBounds = true
+        btn_t3.layer.cornerRadius = 10
+        btn_t3.clipsToBounds = true
             
-            btn_t3.layer.cornerRadius = 10
-            btn_t3.clipsToBounds = true
-            
-            tbv_comm.dataSource = commdata_datasource_delegate
-            tbv_comm.delegate = commdata_datasource_delegate
-            
-        }
-        else{
-            
-            // Advanced Settings
-            tb_dest_ip.addTarget(self, action: #selector(ViewController.tb_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
-            
-            tb_dest_mac.addTarget(self, action: #selector(ViewController.tb_dest_mac_validation(txtField:)), for: UIControlEvents.editingChanged)
-            
-            tb_dest_port.addTarget(self, action: #selector(ViewController.tb_dest_port_validation(txtField:)), for: UIControlEvents.editingChanged)
-            
-            tb_unit_number.addTarget(self, action: #selector(ViewController.tb_unit_number_validation(txtField:)), for: UIControlEvents.editingChanged)
-            
-            
-        }
+        tbv_comm.dataSource = commdata_datasource_delegate
+        tbv_comm.delegate = commdata_datasource_delegate
         
         startServer()
         
         // Startup with V command to load parameters
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: boxPort)
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
         
         // Setup update timer for tech connections
          _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
+        
+    }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        stopServer()
     }
 
     func startRepeatingUpdates(){
@@ -122,7 +169,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // -------------------
     @IBAction func btn_toggles_click(_ sender: Any) {
     
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: boxPort)
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
     
     }
     
@@ -218,12 +265,19 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // Tech connections
     // -------------------
     
-    var connectCode = "0000"
-    var connectToTech = 0
+    @IBAction func tb_code_change(_ sender: Any) {
+        
+        ViewController.connectCode = tb_code.text!
+        
+    }
+    
+    
+    static var connectCode = "0000"
+    static var connectToTech = 0
     
     @IBAction func t1_click(_ sender: Any) {
         
-        connectToTech = 1
+        ViewController.connectToTech = 1
         
         btn_t1.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         btn_t1.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
@@ -241,7 +295,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBAction func t2_click(_ sender: Any) {
         
-        connectToTech = 2
+        ViewController.connectToTech = 2
         
         btn_t2.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         btn_t2.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
@@ -259,7 +313,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBAction func t3_click(_ sender: Any) {
         
-        connectToTech = 3
+        ViewController.connectToTech = 3
         
         btn_t3.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         btn_t3.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
@@ -278,14 +332,14 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // UDP repeat of recevied data
     func techRepeat(repeatString:String){
         
-        if(connectToTech == 0) {
+        if(ViewController.connectToTech == 0) {
             return
         }
         
         let sendString = "<" + tb_code.text! + ">" + repeatString
         
         var techPort = "3520"
-        switch connectToTech {
+        switch ViewController.connectToTech {
             
         case 1:
             techPort = "3531"
@@ -312,7 +366,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     // UDP repeat of recevied data
     func techUpdate(units:Int,serial:String,unitNumber:String,unitIP:String,unitMAC:String,unitPort:String,destIP:String,destMAC:String){
         
-        if(connectToTech == 0) {
+        if(ViewController.connectToTech == 0) {
             return
         }
         
@@ -331,7 +385,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         let sendString = "<" + tb_code.text! + ">" + dataString
         
         var techPort = "3520"
-        switch connectToTech {
+        switch ViewController.connectToTech {
             
         case 1:
             techPort = "3531"
@@ -352,530 +406,6 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         sendPacket(body: sendString, ipAddString: "72.16.182.60", port: techPort)
  
     }
-    
-    // --------------------
-    // Advanced Form
-    // --------------------
-    // -- Unit Number
-    @IBOutlet weak var tb_dest_ip: UITextField!
-    @IBOutlet weak var tb_dest_mac: UITextField!
-    @IBOutlet weak var tb_unit_number: UITextField!
-    @IBOutlet weak var tb_dest_port: UITextField!
-    @IBOutlet weak var lb_listening_port: UILabel!
-
-    // -------------------
-    // Editing restaints
-    // -------------------
-    @IBAction func tb_dest_ip_undo(_ sender: Any) {
-        // Keep program from crashing on other non-entry inputs to text field
-        tb_dest_ip.undoManager?.removeAllActions()
-    }
-    @IBAction func tb_dest_mac_undo(_ sender: Any) {
-        // Keep program from crashing on other non-entry inputs to text field
-        tb_dest_mac.undoManager?.removeAllActions()
-    }
-    @IBAction func tb_unit_number_undo(_ sender: Any) {
-        // Keep program from crashing on other non-entry inputs to text field
-        tb_unit_number.undoManager?.removeAllActions()
-    }
-    @IBAction func tb_dest_port_undo(_ sender: Any) {
-        // Keep program from crashing on other non-entry inputs to text field
-        tb_dest_port.undoManager?.removeAllActions()
-    }
-    
-    func tb_ip_validation(txtField: UITextField){
-        
-        let text = txtField.text
-        let limit = 15
-        var newChar:String = ""
-        var preText:String = ""
-        
-        if(text?.characters.count == 0 || (text?.characters.count)! > limit) {
-            return
-        }
-        
-        if(text?.characters.count == 1){
-            
-            newChar = text!
-            preText = ""
-            
-        }
-        else{
-        
-            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
-            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
-            
-        }
-        
-        let testChar = Int(newChar)
-        if(testChar == nil && newChar != "."){
-            txtField.text = preText
-            return
-        }
-        
-        let partsOfIP = text?.components(separatedBy: ".")
-        var valid:Bool = false
-        
-        if(partsOfIP?.count==1){
-            
-            let num = Int((partsOfIP?[0])!)
-            
-            if(num! > -1 && num! < 256){
-                valid = true
-            }
-            
-            
-        }
-        else if(partsOfIP?.count==2){
-            
-            let num1 = Int((partsOfIP?[0])!)
-            let num2 = Int((partsOfIP?[1])!)
-            
-            if(num2 == nil){
-                if(num1! > -1 && num1! < 256){
-                    valid = true
-                }
-            }
-            else{
-                if(num1! > -1 && num1! < 256 &&
-                    num2! > -1 && num2! < 256){
-                    valid = true
-                }
-            }
-        }
-        else if(partsOfIP?.count==3){
-            
-            let num1 = Int((partsOfIP?[0])!)
-            let num2 = Int((partsOfIP?[1])!)
-            let num3 = Int((partsOfIP?[2])!)
-            
-            if(num2 == nil && num3 == nil){
-                valid = false
-            }else{
-                if(num3 == nil){
-                    if(num1! > -1 && num1! < 256 &&
-                        num2! > -1 && num2! < 256){
-                        valid = true
-                    }
-                }
-                else{
-                    if(num1! > -1 && num1! < 256 &&
-                        num2! > -1 && num2! < 256 &&
-                        num3! > -1 && num3! < 256){
-                        valid = true
-                    }
-                }
-            }
-        }
-        else if(partsOfIP?.count==4){
-            
-            let num1 = Int((partsOfIP?[0])!)
-            let num2 = Int((partsOfIP?[1])!)
-            let num3 = Int((partsOfIP?[2])!)
-            let num4 = Int((partsOfIP?[3])!)
-            
-            if(num3 == nil && num4 == nil){
-                valid=false
-            }
-            else{
-                if(num4 == nil){
-                    if(num1! > -1 && num1! < 256 &&
-                        num2! > -1 && num2! < 256 &&
-                        num3! > -1 && num3! < 256){
-                        valid = true
-                    }
-                }
-                else{
-                    if(num1! > -1 && num1! < 256 &&
-                        num2! > -1 && num2! < 256 &&
-                        num3! > -1 && num3! < 256 &&
-                        num4! > -1 && num4! < 256){
-                        valid = true
-                    }
-                }
-            }
-        }
-        else{
-            valid = false
-        }
-        
-        if(valid){
-            return
-        }else{
-            txtField.text = preText
-        }
-        
-        
-    }
-    
-    func tb_dest_mac_validation(txtField: UITextField){
-        
-        let text = txtField.text
-        let limit = 17
-        var newChar:String = ""
-        var preText:String = ""
-        
-        if(text?.characters.count == 0) {
-            return
-        }
-        
-        if(text?.characters.count == 1){
-            
-            newChar = text!
-            preText = ""
-            
-        }
-        else{
-            
-            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
-            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
-            
-        }
-        
-        if((text?.characters.count)! > limit){
-            txtField.text = preText
-            return
-        }
-        
-        let areMatches = matches(for: "[0-9A-Fa-f\\-]", in: newChar)
-        if(areMatches.count == 0){
-            txtField.text = preText
-            return
-        }
-
-        if(newChar == "-"){
-            if(text!.characters.count % 3 != 0){
-                txtField.text = preText
-                return
-            }
-        }
-        
-        let partsOfMac = text?.components(separatedBy: "-")
-        var valid:Bool = false
-        
-        if((partsOfMac?[(partsOfMac?.count)!-1].characters.count)! > 2){
-            txtField.text = preText
-            return
-        }
-        
-        for part in partsOfMac!{
-            
-            let isValid = matches(for: "[0-9A-Fa-f]{1,2}", in: part)
-            if(isValid.count > 0){
-                valid = true
-            }
-            
-        }
-        
-        // If valid input then return without cutting off last char
-        // If invalid cut off last char
-        if(valid){
-            return
-        }
-        else{
-            txtField.text = preText
-        }
-        
-    }
-    
-    func tb_unit_number_validation(txtField: UITextField){
-        
-        let text = txtField.text
-        let limit = 6
-        var newChar:String = ""
-        var preText:String = ""
-        
-        if(text?.characters.count == 0) {
-            return
-        }
-        
-        if(text?.characters.count == 1){
-            
-            newChar = text!
-            preText = ""
-            
-        }
-        else{
-            
-            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
-            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
-            
-        }
-        
-        if((text?.characters.count)! > limit){
-            txtField.text = preText
-            return
-        }
-        
-        let areMatches = matches(for: "[0-9]", in: newChar)
-        if(areMatches.count == 0){
-            txtField.text = preText
-            return
-        }
-        
-        
-    }
-    func tb_dest_port_validation(txtField: UITextField){
-        
-        let text = txtField.text
-        let limit = 4
-        var newChar:String = ""
-        var preText:String = ""
-        
-        if(text?.characters.count == 0) {
-            return
-        }
-        
-        if(text?.characters.count == 1){
-            
-            newChar = text!
-            preText = ""
-            
-        }
-        else{
-            
-            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
-            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
-            
-        }
-        
-        if((text?.characters.count)! > limit){
-            txtField.text = preText
-            return
-        }
-        
-        let areMatches = matches(for: "[0-9]", in: newChar)
-        if(areMatches.count == 0){
-            txtField.text = preText
-            return
-        }
-        
-    }
-    
-    // -------------------
-    // Changes
-    // -------------------
-    @IBAction func tb_unit_number_end_edit(_ sender: Any) {
-        
-        // Save unit number
-        var unitNumber = tb_unit_number.text
-        while((unitNumber?.characters.count)!<6){
-            unitNumber = "0" + unitNumber!;
-        }
-        
-        let destination_port = boxPort
-        
-        sendPacket(body: "^^IdU000000" + unitNumber!, ipAddString: "255.255.255.255", port: destination_port)
-        
-    }
-    @IBAction func tb_dest_ip_did_end(_ sender: Any) {
-        
-       // Save unit number
-        let hexIP = convertIPToHexString(ipAddress: tb_dest_ip.text!);
-        if(hexIP != "-1"){
-            
-            sendPacket(body: "^^IdD" + hexIP, ipAddString: "255.255.255.255", port: boxPort)//External IP
-            updateParameters();
-            
-        }else{
-            
-            // Show message that IP is in incorrect format
-            showPopup(parent: self, title: "Invalid IP Address", message: "The IP Address you have entered is not a valid IP address. Please retry.",yesOrNo: false)
-            
-        }
-        
-    }
-    @IBAction func tb_dest_mac_did_end(_ sender: Any) {
-        
-        // Save destination MAC
-        let macParts = tb_dest_mac.text?.components(separatedBy: "-")
-        var partsOfMac = Array(repeating: "", count: 6)
-        
-        var cnt = 0
-        for part in macParts!{
-            partsOfMac[cnt] = part.uppercased()
-            cnt += 1
-        }
-        
-        if(partsOfMac.count != 6){
-            
-            // incorrect format
-            showPopup(parent: self, title: "MAC Invalid", message: "The MAC address you entered is invalid. Please retry.",yesOrNo: false)
-            return;
-        }
-        
-        var hexMac:String = partsOfMac[0]
-        hexMac += "-" + partsOfMac[1]
-        hexMac += "-" + partsOfMac[2]
-        hexMac += "-" + partsOfMac[3]
-        hexMac += "-" + partsOfMac[4]
-        hexMac += "-" + partsOfMac[5]
-        
-        sendPacket(body: "^^IdC" + hexMac, ipAddString: "255.255.255.255", port: boxPort)//Destination MAC address
-        updateParameters();
-        
-    }
-    
-    @IBAction func tb_dest_port_did_end(_ sender: Any) {
-        
-        if Int(tb_dest_port.text!) != nil{
-            
-            let num = Int(tb_dest_port.text!)
-            
-            var hexPort = intToHex(num: num!)
-            
-            while(hexPort.characters.count<4){
-                hexPort = "0" + hexPort
-            }
-            
-            hexPort = hexPort.uppercased()
-            
-            sendPacket(body: "^^IdT" + hexPort, ipAddString: "255.255.255.255", port: boxPort)
-        
-            lb_listening_port.text = "Listening on port: " + tb_dest_port.text!
-            boxPort = tb_dest_port.text!
-            
-            
-            
-        }
-        else{
-            
-            // display error popup
-            showPopup(parent: self, title: "Invalid Port", message: "The port you entered is invalid. Please retry.",yesOrNo: false)
-            
-        }
-        
-    }
-    
-    // Advanced - needed functions
-    func matches(for regex: String, in text: String) -> [String] {
-        
-        do {
-            let regex = try NSRegularExpression(pattern: regex)
-            let nsString = text as NSString
-            let results = regex.matches(in: text, range: NSRange(location: 0, length: nsString.length))
-            return results.map { nsString.substring(with: $0.range)}
-        } catch let error {
-            print("invalid regex: \(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    func intToHex(num:Int)->String{
-        
-        return String(format:"%2X", num)
-        
-    }
-    
-    func convertIPToHexString(ipAddress:String)->String{
-        
-        let partsOfIpAddress = ipAddress.components(separatedBy: ".")
-        
-        var allAreInts = true;
-        
-        var hexStrings = Array(repeating: "", count: 4)
-        
-        var cnt = 0
-        for ipPart in partsOfIpAddress{
-            
-            if let num = Int(ipPart){
-            
-                if(num > 255){
-                    return "-1"
-                }
-                hexStrings[cnt] = String(format:"%2X",num)
-                hexStrings[cnt] = hexStrings[cnt].uppercased()
-                
-                if(hexStrings[cnt].characters.count == 1){
-                    hexStrings[cnt] = "0" + hexStrings[cnt]
-                }
-                
-                cnt += 1
-                
-            }
-            else{
-                allAreInts = false
-            }
-            
-        }
-        
-        if(!allAreInts){
-            return "-1"
-        }
-        
-        return hexStrings[0] + hexStrings[1] + hexStrings[2] + hexStrings[3]
-        
-        
-    }
-    
-    @IBAction func btnResetELDefaults_Click(_ sender: Any) {
-        
-        showPopup(parent: self, title: "Reset Ethernet Defaults?", message: "Are you sure you wish to reset to Ethernet Link Defaults? This will take a moment.", yesOrNo: true)
-
-    }
-    
-    func resetEL(){
-        
-        //Destination IP
-        sendPacket(body: "^^IdDFFFFFFFF", ipAddString: "255.255.255.255", port: boxPort)
-        
-        sleep(1)
-        
-        //Unit ID
-        sendPacket(body: "^^IdU000000000001", ipAddString: "255.255.255.255", port: boxPort)
-        
-        sleep(1)
-        
-        //Internal IP
-        sendPacket(body: "^^IdIC0A8005A", ipAddString: "255.255.255.255", port: boxPort)
-        
-        sleep(1)
-        
-        //Destination MAC address
-        sendPacket(body: "^^IdCFFFFFFFFFFFF", ipAddString: "255.255.255.255", port: boxPort)
-        
-        sleep(1)
-        
-        //Internal MAC address
-        sendPacket(body: "^^IdM0620101332CC", ipAddString: "255.255.255.255", port: boxPort)
-        
-        sleep(1)
-        
-        //Port Number
-        sendPacket(body: "^^IdT0DC0", ipAddString: "255.255.255.255", port: boxPort)
-        
-        sleep(1)
-        
-        // Update
-        updateParameters();
-    }
-    
-    @IBAction func btnResetUnitDefaults_Click(_ sender: Any) {
-        
-        showPopup(parent: self, title: "Reset Unit Defaults?", message: "Are you sure you wish to reset to Unit Defaults? This will take a moment.", yesOrNo: true)
-
-        
-    }
-    
-    func resetUnit(){
-        
-        //External IP
-        sendPacket(body: "^^Id-N0000007701", ipAddString: "255.255.255.255", port: boxPort)
-        
-        sleep(1)
-        
-        //Reset
-        sendPacket(body: "^^Id-R", ipAddString: "255.255.255.255", port: boxPort)
-        
-        sleep(1)
-        
-        // Update
-        updateParameters();
-    }
-    
-    
-    // ---------------------------------------------------------------------
-    
     
     // ----------------------------
     // POPUP
@@ -900,7 +430,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     func updateParameters(){
     
-        let destination_port = boxPort
+        let destination_port = ViewController.boxPort
         sendPacket(body: "^^IdX", ipAddString: "255.255.255.255", port: destination_port)
         
     }
@@ -921,7 +451,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBAction func v_click(_ sender: Any) {
         
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: boxPort)
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
         
     }
     
@@ -929,7 +459,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         let commandStr = "^^Id-\(command)"
         
-        sendPacket(body: commandStr, ipAddString: "255.255.255.255",port: boxPort)
+        sendPacket(body: commandStr, ipAddString: "255.255.255.255",port: ViewController.boxPort)
         
         _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getToggles), userInfo: nil, repeats: false)
         
@@ -938,7 +468,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     func getToggles() {
         
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: boxPort)
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
         
     }
     
@@ -1016,9 +546,11 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
         
     }
     
-    fileprivate func stopServer(_ sender: AnyObject) {
+    fileprivate func stopServer() {
+        
         if socket != nil {
             socket?.pauseReceiving()
+            socket?.close()
         }
         
     }
@@ -1315,22 +847,18 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             
             let unit_number = String(unit_num_1) + String(unit_num_2) + String(unit_num_3) + String(unit_num_4) + String(unit_num_5) + String(unit_num_6)
             
-            if(tb_unit_number != nil){
-                
-                if(!(tb_unit_number?.isFocused)!){
-                    tb_unit_number?.text = unit_number
-                }
-                
-            }
-            
             // Get UNIT IP address
             let unit_ip_1 = data[33]
             let unit_ip_2 = data[34]
             let unit_ip_3 = data[35]
             let unit_ip_4 = data[36]
             
-            unit_ip = String(unit_ip_1) + "." + String(unit_ip_2) + "." + String(unit_ip_3) + "." + String(unit_ip_4)
-            tb_unit_ip.text = unit_ip
+            let unit_ip = String(unit_ip_1) + "." + String(unit_ip_2) + "." + String(unit_ip_3) + "." + String(unit_ip_4)
+            
+            if(tb_unit_ip != nil){
+                tb_unit_ip.text = unit_ip
+            }
+        
             
             // Get UNIT MAC address
             var unit_mac_1 = String(format:"%X", data[24])
@@ -1363,13 +891,13 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                 unit_mac_6 = "0" + unit_mac_6
             }
             
-            unit_mac_address = unit_mac_1 + "-" + unit_mac_2 + "-" + unit_mac_3 + "-" + unit_mac_4 + "-" + unit_mac_5 + "-" + unit_mac_6
+            let unit_mac_address = unit_mac_1 + "-" + unit_mac_2 + "-" + unit_mac_3 + "-" + unit_mac_4 + "-" + unit_mac_5 + "-" + unit_mac_6
             
             // Unit PORT
             let port_hex = String(format:"%X", data[52]) + String(format:"%X", data[53])
             let port_int = Int(port_hex, radix: 16)
             let port_i : Int = port_int!
-            dest_port = String(port_i)
+            let dest_port = String(port_i)
             
             // Get Dest IP address
             let dest_ip_1 = data[40]
@@ -1377,7 +905,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
             let dest_ip_3 = data[42]
             let dest_ip_4 = data[43]
             
-            dest_ip = String(dest_ip_1) + "." + String(dest_ip_2) + "." + String(dest_ip_3) + "." + String(dest_ip_4)
+            let dest_ip = String(dest_ip_1) + "." + String(dest_ip_2) + "." + String(dest_ip_3) + "." + String(dest_ip_4)
             
             // Get UNIT MAC address
             var dest_mac_1 = String(format:"%X", data[66])
@@ -1410,7 +938,7 @@ class ViewController: UITableViewController, GCDAsyncUdpSocketDelegate {
                 dest_mac_6 = "0" + dest_mac_6
             }
             
-            dest_mac_address = dest_mac_1 + "-" + dest_mac_2 + "-" + dest_mac_3 + "-" + dest_mac_4 + "-" + dest_mac_5 + "-" + dest_mac_6
+            let dest_mac_address = dest_mac_1 + "-" + dest_mac_2 + "-" + dest_mac_3 + "-" + dest_mac_4 + "-" + dest_mac_5 + "-" + dest_mac_6
             
             techUpdate(units: unitsDetected, serial: serial_number, unitNumber: unit_number, unitIP: unit_ip, unitMAC: unit_mac_address, unitPort: dest_port, destIP: dest_ip, destMAC: dest_mac_address)
             
