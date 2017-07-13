@@ -672,6 +672,7 @@
                                                     </state>
                                                     <connections>
                                                         <action selector="btn_clear_raw_log_click:" destination="4y4-3u-KXa" eventType="touchUpInside" id="WyW-Rv-hPN"/>
+                                                        <action selector="btn_set_time_click:" destination="4y4-3u-KXa" eventType="touchUpInside" id="69S-p3-CcM"/>
                                                     </connections>
                                                 </button>
                                             </subviews>

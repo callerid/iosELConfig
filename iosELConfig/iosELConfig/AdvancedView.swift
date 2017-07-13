@@ -51,6 +51,39 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         
     }
     
+    // Save time
+    
+    @IBAction func btn_set_time_click(_ sender: Any) {
+        
+        let date = Date()
+        let calendar = Calendar.current
+        var month = String(calendar.component(.month, from: date))
+        var day = String(calendar.component(.day, from: date))
+        var hour = String(calendar.component(.hour, from: date))
+        var minutes = String(calendar.component(.minute, from: date))
+        
+        if(month.characters.count == 1){
+            month = "0" + month
+        }
+        
+        if(day.characters.count == 1){
+            day = "0" + day
+        }
+        
+        if(hour.characters.count == 1){
+            hour = "0" + hour
+        }
+        
+        if(minutes.characters.count == 1){
+            minutes = "0" + minutes
+        }
+        
+        let sendString:String = "^^Id-Z" + month + day + hour + minutes + "\r";
+        
+        sendPacket(body: sendString, ipAddString: "255.255.255.255", port: ViewController.boxPort)
+        
+    }
+    
     //--------------------------------------------------------------------------
     // Log comm data
     //--------------------------------------------------------------------------
