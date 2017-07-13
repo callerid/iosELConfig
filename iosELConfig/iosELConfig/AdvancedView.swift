@@ -645,7 +645,7 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         // Setup update timer for tech connections
         _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateParameters), userInfo: nil, repeats: true)
-        _ = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(getToggles), userInfo: nil, repeats: true)
+        _ = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(getToggles), userInfo: nil, repeats: true)
         
     }
     

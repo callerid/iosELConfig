@@ -49,7 +49,6 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     // Globals
     // ----------------
     var pickerDataSource = ["1","5","9","17","21","25","33"]
-    static var onAdvanced:Bool = false
     static var boxPort:String = "3520";
     // ----------------
     
