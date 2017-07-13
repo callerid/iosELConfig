@@ -11,6 +11,7 @@ import CocoaAsyncSocket
 
 class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
 
+    let rawdata_datasource_delegate = RawDataView()
     
     // References
     @IBOutlet weak var tb_dest_ip: UITextField!
@@ -19,6 +20,9 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     @IBOutlet weak var tb_dest_port: UITextField!
     @IBOutlet weak var lb_listening_port: UILabel!
     
+    @IBOutlet weak var tbv_raw_data: UITableView!
+    
+    @IBOutlet weak var lb_date_time: UIButton!
     
     //-----------
     
@@ -39,8 +43,37 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         tb_unit_number?.addTarget(self, action: #selector(AdvancedView.tb_unit_number_validation(txtField:)), for: UIControlEvents.editingChanged)
         
+        tbv_raw_data.dataSource = rawdata_datasource_delegate
+        tbv_raw_data.delegate = rawdata_datasource_delegate
+        
         // Setup update timer for tech connections
-        _ = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
+        _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
+        
+    }
+    
+    //--------------------------------------------------------------------------
+    // Log comm data
+    //--------------------------------------------------------------------------
+    
+    @IBAction func btn_clear_raw_log_click(_ sender: Any) {
+        
+        rawdata_datasource_delegate.clear()
+        tbv_raw_data.reloadData()
+        
+    }
+    
+    
+    func logRawData(data:String){
+        
+        if(rawdata_datasource_delegate.logRawData(data: data)){
+            
+            let raw_data_count = rawdata_datasource_delegate.getRawDataCount()
+            
+            tbv_raw_data.beginUpdates()
+            tbv_raw_data.insertRows(at: [IndexPath(row: raw_data_count-1, section: 0)], with: .automatic)
+            tbv_raw_data.endUpdates()
+            
+        }
         
     }
     
@@ -579,6 +612,7 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         // Setup update timer for tech connections
         _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateParameters), userInfo: nil, repeats: true)
+        _ = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(getToggles), userInfo: nil, repeats: true)
         
     }
     
@@ -642,6 +676,11 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         
     }
 
+    func getToggles() {
+        
+        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
+        
+    }
     
     //--------------------------------------------------------------------------
     // Low Level UDP code
@@ -704,6 +743,7 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         if socket != nil {
             socket?.pauseReceiving()
             socket?.close()
+            socket = nil
         }
         
     }
@@ -716,17 +756,42 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         
         
+        if let udpRecieved = NSString(data: data, encoding: String.Encoding.ascii.rawValue){
+        
+            let commPattern = "([Ee])([Cc])([Xx])([Uu])([Dd])([Aa])([Ss])([Oo])([Bb])([Kk])([Tt]) L=(\\d{1,2}) (\\d{1,2}/\\d{1,2} (\\d{1,2}:\\d{1,2}:\\d{1,2}))"
+            let commRegex = try! NSRegularExpression(pattern: commPattern, options: [])
+            let commMatches = commRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: (udpRecieved.length)))
+        
+            if(commMatches.count>0){
+            
+                var date = "n/a"
+            
+                commRegex.enumerateMatches(in: udpRecieved as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:(udpRecieved.length)))
+                {(result : NSTextCheckingResult?, _, _) in
+                    let capturedRange = result!.rangeAt(1)
+                    if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
+                        date = (udpRecieved.substring(with: result!.rangeAt(13)))
+                        
+                        lb_date_time.setTitle(date, for: .normal)
+                        
+                    }
+                
+                }
+            }
+        }
+
+    
         // ---------------------
         // X COMMAND RECEIVED
         // ---------------------
         let length = data.count
         if(length > 85){
-            
+    
             // Make sure it is a CallerID X command packet
             if(!(data[0]==94 && data[1]==94)){
                 return
             }
-            
+    
             /*
              <1>units dectected</1>
              <2>serial number</2>
@@ -862,8 +927,36 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
                 tb_dest_mac?.text = dest_mac_address
             }
             
-            
             techUpdate(units: unitsDetected, serial: serial_number, unitNumber: unit_number, unitIP: unit_ip, unitMAC: unit_mac_address, unitPort: dest_port, destIP: dest_ip, destMAC: dest_mac_address)
+            
+        }
+        else{
+            if(length < 7){
+                return
+            }
+            
+            var displayString:String = ""
+            let bArray = Array(data)
+            for n in bArray{
+                
+                var num = n
+                let d = NSData(bytes: &num, length: 1)
+                
+                let isAscii = (num > 31 && num < 127)
+                
+                if (isAscii){
+                    
+                    let c = String(data: d as Data, encoding: String.Encoding(rawValue: String.Encoding.ascii.rawValue))
+                    displayString.append(c!)
+                }
+                else{
+                    displayString.append("x")
+                }
+                
+            }
+            
+            logRawData(data: displayString)
+            
             
         }
         
@@ -939,5 +1032,16 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         
         return "unknown"
         
+    }
+}
+
+extension String {
+    var asciiArray: [UInt32] {
+        return unicodeScalars.filter{$0.isASCII}.map{$0.value}
+    }
+}
+extension Character {
+    var asciiValue: UInt32? {
+        return String(self).unicodeScalars.filter{$0.isASCII}.first?.value
     }
 }

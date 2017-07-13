@@ -556,6 +556,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         if socket != nil {
             socket?.pauseReceiving()
             socket?.close()
+            socket = nil
         }
         
     }
