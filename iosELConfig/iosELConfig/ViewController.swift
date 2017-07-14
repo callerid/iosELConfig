@@ -14,7 +14,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
 
     let commdata_datasource_delegate = CommDataView()
     
-    var suggestedIP = Array(arrayLiteral: 192,168,0,90)
+    var suggestedIP = Array(arrayLiteral: 0,0,0,0)
     
     //-----------------------------------------
     // LINK UI
@@ -30,8 +30,6 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     @IBOutlet weak var btn_k: UIButton!
     @IBOutlet weak var btn_b: UIButton!
     
-    @IBOutlet weak var tb_unit_ip: UITextField!
-    
     @IBOutlet weak var btn_retrieve_toggles: UIButton!
     @IBOutlet weak var btn_adv_settings: UIButton!
     
@@ -43,15 +41,16 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     
     @IBOutlet weak var tbv_comm: UITableView!
     
-    @IBOutlet weak var dtpSetTime: UIDatePicker!
+    @IBOutlet weak var lbSetSuggested: UIButton!
     
-    @IBOutlet weak var lbSetSuggested: UILabel!
+    @IBOutlet weak var tb_unit_ip: UITextField!
+    
     @IBOutlet weak var pickerview_lnCnt: UIPickerView!
     // ----------------
     // Globals
     // ----------------
     let pickerDataSource = ["01","05","09","17","21","25","33"]
-    static var boxPort:String = "3520";
+    static var boxPort:String = "3520"
     // ----------------
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -117,6 +116,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        ViewController.boxPort = "3520"
         
         pickerview_lnCnt.delegate = self
         pickerview_lnCnt.dataSource = self
@@ -124,7 +124,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         btn_retrieve_toggles.layer.cornerRadius = 10
         btn_retrieve_toggles.clipsToBounds = true
             
-        tb_unit_ip.addTarget(self, action: #selector(AdvancedView.tb_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
+        tb_unit_ip.addTarget(self, action: #selector(ViewController.tb_ip_validation(txtField:)), for: UIControlEvents.editingChanged)
         
         btn_adv_settings.layer.cornerRadius = 10
         btn_adv_settings.clipsToBounds = true
@@ -149,6 +149,131 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         
     }
     
+    func tb_ip_validation(txtField: UITextField){
+        
+        let text = txtField.text
+        let limit = 15
+        var newChar:String = ""
+        var preText:String = ""
+        
+        if(text?.characters.count == 0 || (text?.characters.count)! > limit) {
+            return
+        }
+        
+        if(text?.characters.count == 1){
+            
+            newChar = text!
+            preText = ""
+            
+        }
+        else{
+            
+            newChar = (text?.substring(from: (text?.index(before: (text?.endIndex)!))!))!
+            preText = (text?.substring(to: (text?.index(before: (text?.endIndex)!))!))!
+            
+        }
+        
+        let testChar = Int(newChar)
+        if(testChar == nil && newChar != "."){
+            txtField.text = preText
+            return
+        }
+        
+        let partsOfIP = text?.components(separatedBy: ".")
+        var valid:Bool = false
+        
+        if(partsOfIP?.count==1){
+            
+            let num = Int((partsOfIP?[0])!)
+            
+            if(num! > -1 && num! < 256){
+                valid = true
+            }
+            
+            
+        }
+        else if(partsOfIP?.count==2){
+            
+            let num1 = Int((partsOfIP?[0])!)
+            let num2 = Int((partsOfIP?[1])!)
+            
+            if(num2 == nil){
+                if(num1! > -1 && num1! < 256){
+                    valid = true
+                }
+            }
+            else{
+                if(num1! > -1 && num1! < 256 &&
+                    num2! > -1 && num2! < 256){
+                    valid = true
+                }
+            }
+        }
+        else if(partsOfIP?.count==3){
+            
+            let num1 = Int((partsOfIP?[0])!)
+            let num2 = Int((partsOfIP?[1])!)
+            let num3 = Int((partsOfIP?[2])!)
+            
+            if(num2 == nil && num3 == nil){
+                valid = false
+            }else{
+                if(num3 == nil){
+                    if(num1! > -1 && num1! < 256 &&
+                        num2! > -1 && num2! < 256){
+                        valid = true
+                    }
+                }
+                else{
+                    if(num1! > -1 && num1! < 256 &&
+                        num2! > -1 && num2! < 256 &&
+                        num3! > -1 && num3! < 256){
+                        valid = true
+                    }
+                }
+            }
+        }
+        else if(partsOfIP?.count==4){
+            
+            let num1 = Int((partsOfIP?[0])!)
+            let num2 = Int((partsOfIP?[1])!)
+            let num3 = Int((partsOfIP?[2])!)
+            let num4 = Int((partsOfIP?[3])!)
+            
+            if(num3 == nil && num4 == nil){
+                valid=false
+            }
+            else{
+                if(num4 == nil){
+                    if(num1! > -1 && num1! < 256 &&
+                        num2! > -1 && num2! < 256 &&
+                        num3! > -1 && num3! < 256){
+                        valid = true
+                    }
+                }
+                else{
+                    if(num1! > -1 && num1! < 256 &&
+                        num2! > -1 && num2! < 256 &&
+                        num3! > -1 && num3! < 256 &&
+                        num4! > -1 && num4! < 256){
+                        valid = true
+                    }
+                }
+            }
+        }
+        else{
+            valid = false
+        }
+        
+        if(valid){
+            return
+        }else{
+            txtField.text = preText
+        }
+        
+        
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         startServer()
     }
@@ -167,6 +292,46 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     //-------------------------------------------------------------------------
     // Actions
     //-------------------------------------------------------------------------
+    @IBAction func tb_unit_ip_undo(_ sender: Any) {
+        tb_unit_ip?.undoManager?.removeAllActions()
+    }
+    
+    @IBAction func tb_unit_ip_did_end(_ sender: Any) {
+    
+        let hexIP = convertIPToHexString(ipAddress: (tb_unit_ip?.text!)!);
+        if(hexIP != "-1"){
+            
+            sendPacket(body: "^^IdI" + hexIP, ipAddString: "255.255.255.255", port: ViewController.boxPort)//External IP
+            updateParameters();
+            
+        }else{
+            
+            // Show message that IP is in incorrect format
+            showPopup(parent: self, title: "Invalid IP Address", message: "The IP Address you have entered is not a valid IP address. Please retry.",yesOrNo: false)
+            
+        }
+        
+    }
+    
+    @IBAction func setSuggested_click(_ sender: Any) {
+        
+        let suggestedIPString = String(suggestedIP[0]) + "." + String(suggestedIP[1]) + "." + String(suggestedIP[2]) + "." + String(suggestedIP[3])
+        
+        let hexIP = convertIPToHexString(ipAddress: suggestedIPString);
+        if(hexIP != "-1"){
+            
+            sendPacket(body: "^^IdI" + hexIP, ipAddString: "255.255.255.255", port: ViewController.boxPort)//External IP
+            updateParameters();
+            
+        }else{
+            
+            // Show message that IP is in incorrect format
+            showPopup(parent: self, title: "Invalid IP Address", message: "The IP Address you have entered is not a valid IP address. Please retry.",yesOrNo: false)
+            
+        }
+        
+    }
+    
     // -------------------
     // Toggles
     // -------------------
@@ -866,7 +1031,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
             
             let unit_ip = String(unit_ip_1) + "." + String(unit_ip_2) + "." + String(unit_ip_3) + "." + String(unit_ip_4)
             
-            if(tb_unit_ip != nil){
+            if(tb_unit_ip != nil && !tb_unit_ip.isEditing){
                 tb_unit_ip.text = unit_ip
             }
         
@@ -906,10 +1071,13 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
             
             if(isSuggested){
                 lbSetSuggested.isHidden = true
-                lbSetSuggested.text = "Set Suggested IP: " + suggestedIP[0] + "." + suggestedIP[1] + "." + suggestedIP[2] + "." + suggestedIP[3]
             }
             else{
                 lbSetSuggested.isHidden = false
+                
+                let fullSuggested = "Set Suggested IP: " + String(suggestedIP[0]) + "." + String(suggestedIP[1]) + "." + String(suggestedIP[2]) + "." + String(suggestedIP[3])
+                
+                lbSetSuggested.setTitle(fullSuggested, for: .normal)
             }
             
             // Get UNIT MAC address
@@ -1017,6 +1185,48 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     //-----------------------------------
     // Lower level functions
     //-----------------------------------
+    
+    func convertIPToHexString(ipAddress:String)->String{
+        
+        let partsOfIpAddress = ipAddress.components(separatedBy: ".")
+        
+        var allAreInts = true;
+        
+        var hexStrings = Array(repeating: "", count: 4)
+        
+        var cnt = 0
+        for ipPart in partsOfIpAddress{
+            
+            if let num = Int(ipPart){
+                
+                if(num > 255){
+                    return "-1"
+                }
+                hexStrings[cnt] = String(format:"%2X",num)
+                hexStrings[cnt] = hexStrings[cnt].uppercased()
+                
+                if(hexStrings[cnt].characters.count == 1){
+                    hexStrings[cnt] = "0" + hexStrings[cnt]
+                }
+                
+                cnt += 1
+                
+            }
+            else{
+                allAreInts = false
+            }
+            
+        }
+        
+        if(!allAreInts){
+            return "-1"
+        }
+        
+        return hexStrings[0] + hexStrings[1] + hexStrings[2] + hexStrings[3]
+        
+        
+    }
+    
     func convertPointerToArray(length: Int, data: UnsafePointer<Int8>) -> [Int8] {
         
         let buffer = UnsafeBufferPointer(start: data, count: length);

@@ -138,16 +138,6 @@
                                                         <outletCollection property="gestureRecognizers" destination="fqM-BM-Jyj" appends="YES" id="Qro-6n-5vZ"/>
                                                     </connections>
                                                 </button>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="192.168.0.90" borderStyle="roundedRect" textAlignment="center" minimumFontSize="24" translatesAutoresizingMaskIntoConstraints="NO" id="aAv-PA-cs3">
-                                                    <rect key="frame" x="200" y="31" width="251" height="30"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="textColor" red="0.16516572830000001" green="0.2489949437" blue="0.40131152850000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                                                    <textInputTraits key="textInputTraits"/>
-                                                    <connections>
-                                                        <action selector="tb_unit_ip_did_end:" destination="6cb-gn-HSN" eventType="editingDidEnd" id="xql-dg-M5Q"/>
-                                                    </connections>
-                                                </textField>
                                                 <textField hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="code" borderStyle="roundedRect" textAlignment="center" minimumFontSize="24" translatesAutoresizingMaskIntoConstraints="NO" id="jWL-18-Xj8">
                                                     <rect key="frame" x="426" y="99" width="144" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -226,13 +216,29 @@
                                                         <outlet property="delegate" destination="6cb-gn-HSN" id="peg-eI-gfK"/>
                                                     </connections>
                                                 </pickerView>
-                                                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Set to Suggested: xxx.xxx.xxx.xxx" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Mf-mI-a7A">
-                                                    <rect key="frame" x="459" y="31" width="509" height="30"/>
+                                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Vl-YN-nOk">
+                                                    <rect key="frame" x="459" y="33" width="520" height="28"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                                                    <color key="textColor" red="0.34117648010000001" green="0.62352943419999995" blue="0.16862745579999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                    <gestureRecognizers/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <state key="normal" title="Set to Suggested: xxx.xxx.xxx.xxx">
+                                                        <color key="titleColor" red="0.046028896700000002" green="0.67217859459999996" blue="0.066331042739999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="setSuggested_click:" destination="6cb-gn-HSN" eventType="touchUpInside" id="rEV-ZJ-2Qd"/>
+                                                    </connections>
+                                                </button>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="xxx.xxx.xxx.xxx" borderStyle="roundedRect" textAlignment="center" minimumFontSize="24" translatesAutoresizingMaskIntoConstraints="NO" id="iGi-NK-yvW">
+                                                    <rect key="frame" x="182" y="32" width="251" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="textColor" red="0.16516572830000001" green="0.2489949437" blue="0.40131152850000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="tb_unit_ip_did_end:" destination="6cb-gn-HSN" eventType="editingDidEnd" id="yvF-mG-yPV"/>
+                                                        <action selector="tb_unit_ip_undo:" destination="6cb-gn-HSN" eventType="editingChanged" id="iX1-xN-imE"/>
+                                                    </connections>
+                                                </textField>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="0.16516572830000001" green="0.2489949437" blue="0.40131152850000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -397,12 +403,12 @@
                         <outlet property="btn_t2" destination="WAe-Jb-718" id="lOk-FG-WJj"/>
                         <outlet property="btn_t3" destination="1ae-pX-qiS" id="viY-Kb-QdQ"/>
                         <outlet property="btn_u" destination="R1s-sc-8LC" id="N9N-rT-9dh"/>
-                        <outlet property="lbSetSuggested" destination="5Mf-mI-a7A" id="WTZ-b3-2Fe"/>
+                        <outlet property="lbSetSuggested" destination="3Vl-YN-nOk" id="P7x-eU-cNx"/>
                         <outlet property="lb_code" destination="aPw-O5-yMZ" id="eu4-kT-zXq"/>
                         <outlet property="pickerview_lnCnt" destination="IEY-hy-3OC" id="bCw-pB-Ih2"/>
                         <outlet property="tb_code" destination="jWL-18-Xj8" id="geR-oM-jN1"/>
                         <outlet property="tb_header" destination="cs2-oQ-ZP0" id="ShF-eD-WLG"/>
-                        <outlet property="tb_unit_ip" destination="aAv-PA-cs3" id="Tod-wi-AXg"/>
+                        <outlet property="tb_unit_ip" destination="iGi-NK-yvW" id="C1T-OR-zud"/>
                         <outlet property="tbv_comm" destination="h9c-BO-W6V" id="Djc-oG-uQT"/>
                     </connections>
                 </tableViewController>
@@ -482,6 +488,7 @@
                         <segue destination="4y4-3u-KXa" kind="show" id="AJt-Xh-5Ak"/>
                     </connections>
                 </tapGestureRecognizer>
+                <tapGestureRecognizer id="TxT-X9-MT0"/>
             </objects>
             <point key="canvasLocation" x="-1862.6953124999998" y="-90.625"/>
         </scene>

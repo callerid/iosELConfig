@@ -456,11 +456,11 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         }
         
         var hexMac:String = partsOfMac[0]
-        hexMac += "-" + partsOfMac[1]
-        hexMac += "-" + partsOfMac[2]
-        hexMac += "-" + partsOfMac[3]
-        hexMac += "-" + partsOfMac[4]
-        hexMac += "-" + partsOfMac[5]
+        hexMac += partsOfMac[1]
+        hexMac += partsOfMac[2]
+        hexMac += partsOfMac[3]
+        hexMac += partsOfMac[4]
+        hexMac += partsOfMac[5]
         
         sendPacket(body: "^^IdC" + hexMac, ipAddString: "255.255.255.255", port: ViewController.boxPort)//Destination MAC address
         updateParameters();
