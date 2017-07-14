@@ -14,6 +14,8 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
 
     let commdata_datasource_delegate = CommDataView()
     
+    var suggestedIP = Array(arrayLiteral: 192,168,0,90)
+    
     //-----------------------------------------
     // LINK UI
     //-----------------------------------------
@@ -43,12 +45,12 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     
     @IBOutlet weak var dtpSetTime: UIDatePicker!
     
-    @IBOutlet weak var pickerLineCount: UIPickerView!
-    
+    @IBOutlet weak var lbSetSuggested: UILabel!
+    @IBOutlet weak var pickerview_lnCnt: UIPickerView!
     // ----------------
     // Globals
     // ----------------
-    var pickerDataSource = ["1","5","9","17","21","25","33"]
+    let pickerDataSource = ["01","05","09","17","21","25","33"]
     static var boxPort:String = "3520";
     // ----------------
     
@@ -116,9 +118,8 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         
         super.viewDidLoad()
         
-        // Main Screen
-        pickerLineCount.dataSource = self
-        pickerLineCount.delegate = self
+        pickerview_lnCnt.delegate = self
+        pickerview_lnCnt.dataSource = self
             
         btn_retrieve_toggles.layer.cornerRadius = 10
         btn_retrieve_toggles.clipsToBounds = true
@@ -160,6 +161,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         
         // Setup update timer for tech connections
         _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateParameters), userInfo: nil, repeats: true)
+        _ = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(getToggles), userInfo: nil, repeats: true)
         
     }
     //-------------------------------------------------------------------------
@@ -713,6 +715,10 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
                         
                     }
                     
+                    // set line
+                    let lntCntIndex = pickerDataSource.index(of: line)
+                    pickerview_lnCnt.selectRow(lntCntIndex!, inComponent: 0, animated: true)
+                    
                     if(btn_a != nil){
                         
                         // if got toggles then enable them
@@ -864,6 +870,47 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
                 tb_unit_ip.text = unit_ip
             }
         
+            // Get suggested IP
+            let deviceIP:String = getIFAddresses()
+            let deviceIP_parts = deviceIP.characters.split(separator: ".")
+            
+            let endingIP:Int = Int(String(deviceIP_parts[3]))!
+            
+            var suggestedPart = "90"
+            
+            if(endingIP<50 || endingIP>150) {
+                suggestedPart = "90";
+            }
+            if(endingIP>50 && endingIP<150) {
+                suggestedPart = "190";
+            }
+            
+            let suggestedEnding = Int(suggestedPart)
+            
+            suggestedIP[0] = Int(String(deviceIP_parts[0]))!
+            suggestedIP[1] = Int(String(deviceIP_parts[1]))!
+            suggestedIP[2] = Int(String(deviceIP_parts[2]))!
+            suggestedIP[3] = suggestedEnding!
+            
+            
+            // Check suggested IP
+            var isSuggested = false
+            if (suggestedIP[0] == Int(unit_ip_1) &&
+                suggestedIP[1] == Int(unit_ip_2) &&
+                suggestedIP[2] == Int(unit_ip_3) &&
+                suggestedIP[3] == Int(unit_ip_4)){
+                
+                isSuggested = true
+                
+            }
+            
+            if(isSuggested){
+                lbSetSuggested.isHidden = true
+                lbSetSuggested.text = "Set Suggested IP: " + suggestedIP[0] + "." + suggestedIP[1] + "." + suggestedIP[2] + "." + suggestedIP[3]
+            }
+            else{
+                lbSetSuggested.isHidden = false
+            }
             
             // Get UNIT MAC address
             var unit_mac_1 = String(format:"%X", data[24])
