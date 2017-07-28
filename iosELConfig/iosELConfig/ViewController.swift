@@ -16,6 +16,8 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     
     var suggestedIP = Array(arrayLiteral: 0,0,0,0)
     
+    static let elConfigSaveFile = "iosELConfigSaves.txt"
+    
     //-----------------------------------------
     // LINK UI
     //-----------------------------------------
@@ -46,6 +48,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     @IBOutlet weak var tb_unit_ip: UITextField!
     
     @IBOutlet weak var pickerview_lnCnt: UIPickerView!
+    
     // ----------------
     // Globals
     // ----------------
@@ -275,13 +278,44 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            
+            let path = dir.appendingPathComponent(ViewController.elConfigSaveFile)
+            
+            //reading
+            do {
+                ViewController.boxPort = try String(contentsOf: path, encoding: String.Encoding.utf8)
+            }
+            catch {/* error handling here */}
+        }
+        
         startServer()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        ViewController.saveDestPort()
         stopServer()
     }
 
+    static func saveDestPort(){
+        
+        let text = ViewController.boxPort
+        
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            
+            let path = dir.appendingPathComponent(ViewController.elConfigSaveFile)
+            
+            //writing
+            do {
+                try text.write(to: path, atomically: false, encoding: String.Encoding.utf8)
+            }
+            catch {/* error handling here */}
+            
+        }
+        
+    }
+    
     func startRepeatingUpdates(){
         
         // Setup update timer for tech connections

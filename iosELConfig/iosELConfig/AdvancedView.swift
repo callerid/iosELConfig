@@ -46,6 +46,8 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         tbv_raw_data.dataSource = rawdata_datasource_delegate
         tbv_raw_data.delegate = rawdata_datasource_delegate
         
+        lb_listening_port.text = "Listening on port: " + ViewController.boxPort
+        
         // Setup update timer for tech connections
         _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
         
@@ -111,6 +113,7 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        ViewController.saveDestPort()
         stopServer()
     }
     
