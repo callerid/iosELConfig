@@ -50,6 +50,8 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     
     @IBOutlet weak var pickerview_lnCnt: UIPickerView!
     
+    @IBOutlet weak var tv_network_settings: UITableViewCell!
+    @IBOutlet weak var tv_commands: UITableViewCell!
     // ----------------
     // Globals
     // ----------------
@@ -123,6 +125,10 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         
         pickerview_lnCnt.delegate = self
         pickerview_lnCnt.dataSource = self
+        
+        tv_network_settings.selectionStyle = .none
+        tv_commands.selectionStyle = .none
+        
             
         btn_retrieve_toggles.layer.cornerRadius = 10
         btn_retrieve_toggles.clipsToBounds = true

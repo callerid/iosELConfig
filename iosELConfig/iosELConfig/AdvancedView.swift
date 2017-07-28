@@ -24,12 +24,27 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBOutlet weak var lb_date_time: UIButton!
     
+    @IBOutlet weak var tv_dest_ip: UITableViewCell!
+    @IBOutlet weak var tv_dest_mac: UITableViewCell!
+    @IBOutlet weak var tv_unit_num: UITableViewCell!
+    @IBOutlet weak var tv_dest_port: UITableViewCell!
+    @IBOutlet weak var tv_unit_time: UITableViewCell!
+    @IBOutlet weak var tv_info: UITableViewCell!
+    @IBOutlet weak var tv_resets: UITableViewCell!
     //-----------
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         startServer()
+        
+        tv_dest_ip.selectionStyle = .none
+        tv_dest_mac.selectionStyle = .none
+        tv_unit_num.selectionStyle = .none
+        tv_dest_port.selectionStyle = .none
+        tv_unit_time.selectionStyle = .none
+        tv_info.selectionStyle = .none
+        tv_resets.selectionStyle = .none
         
         // Startup with V command to load parameters
         sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)

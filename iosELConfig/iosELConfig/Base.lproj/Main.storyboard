@@ -410,6 +410,8 @@
                         <outlet property="tb_header" destination="cs2-oQ-ZP0" id="ShF-eD-WLG"/>
                         <outlet property="tb_unit_ip" destination="iGi-NK-yvW" id="C1T-OR-zud"/>
                         <outlet property="tbv_comm" destination="h9c-BO-W6V" id="Djc-oG-uQT"/>
+                        <outlet property="tv_commands" destination="u15-Tk-bpy" id="P29-HX-1h7"/>
+                        <outlet property="tv_network_settings" destination="OcM-mw-Xf5" id="tmw-K3-h7l"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Sje-bU-T4t" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -819,6 +821,13 @@
                         <outlet property="tb_dest_port" destination="ldi-gd-ls7" id="gUM-cr-OhC"/>
                         <outlet property="tb_unit_number" destination="KFP-EU-4xC" id="y4M-TV-9c8"/>
                         <outlet property="tbv_raw_data" destination="cpA-Wj-W9N" id="rNa-rO-eO8"/>
+                        <outlet property="tv_dest_ip" destination="DO6-tz-sEk" id="EhB-Cx-vSI"/>
+                        <outlet property="tv_dest_mac" destination="z0Q-dG-W61" id="dOo-va-PRM"/>
+                        <outlet property="tv_dest_port" destination="90a-Ue-DjD" id="tuA-94-PKZ"/>
+                        <outlet property="tv_info" destination="9F4-JM-mSm" id="s1F-He-aSv"/>
+                        <outlet property="tv_resets" destination="7Zt-l6-f19" id="2eR-Hp-SFE"/>
+                        <outlet property="tv_unit_num" destination="fiF-zt-zi4" id="xvG-hZ-ssf"/>
+                        <outlet property="tv_unit_time" destination="rhG-vk-2mK" id="8Pj-6D-FFp"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8du-1P-e7X" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -829,7 +838,7 @@
         <scene sceneID="HsC-gl-88k">
             <objects>
                 <navigationController id="ZFb-bM-Vq2" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="5vE-Mc-kw7">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="5vE-Mc-kw7">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
