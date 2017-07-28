@@ -17,6 +17,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     var suggestedIP = Array(arrayLiteral: 0,0,0,0)
     
     static let elConfigSaveFile = "iosELConfigSaves.txt"
+    static var preventUpdates = false
     
     //-----------------------------------------
     // LINK UI
@@ -119,7 +120,6 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        ViewController.boxPort = "3520"
         
         pickerview_lnCnt.delegate = self
         pickerview_lnCnt.dataSource = self
@@ -278,22 +278,12 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let path = dir.appendingPathComponent(ViewController.elConfigSaveFile)
-            
-            //reading
-            do {
-                ViewController.boxPort = try String(contentsOf: path, encoding: String.Encoding.utf8)
-            }
-            catch {/* error handling here */}
-        }
-        
+        ViewController.preventUpdates = false
         startServer()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        ViewController.preventUpdates = true
         ViewController.saveDestPort()
         stopServer()
     }
@@ -718,12 +708,27 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     
     fileprivate func getNewSocket() -> GCDAsyncUdpSocket? {
         
-        // set port to CallerID.com port --> 3520
-        let port = UInt16(ViewController.boxPort)
+        if(ViewController.preventUpdates){
+            return nil
+        }
+        
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            
+            let path = dir.appendingPathComponent(ViewController.elConfigSaveFile)
+            
+            //reading
+            do {
+                ViewController.boxPort = try String(contentsOf: path, encoding: String.Encoding.utf8)
+            }
+            catch {/* error handling here */}
+            
+        }
         
         // Bind to CallerID.com port (3520)
         let sock = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         do {
+            
+            let port = UInt16(ViewController.boxPort)
             
             try sock.bind(toPort: port!)
             try sock.enableBroadcast(true)
@@ -739,7 +744,10 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     fileprivate func startServer() {
         
         do {
-            if(socket?.isClosed())!{
+            if(socket == nil){
+                socket = getNewSocket()
+            }
+            else if(socket?.isClosed())!{
                 socket = getNewSocket()
             }
             try socket?.beginReceiving()

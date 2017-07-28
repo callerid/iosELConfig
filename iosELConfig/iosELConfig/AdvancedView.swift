@@ -113,6 +113,7 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        ViewController.preventUpdates = false
         ViewController.saveDestPort()
         stopServer()
     }
@@ -485,10 +486,10 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
             hexPort = hexPort.uppercased()
             
             sendPacket(body: "^^IdT" + hexPort, ipAddString: "255.255.255.255", port: ViewController.boxPort)
+            ViewController.boxPort = tb_dest_port.text!
+            ViewController.saveDestPort()
             
-            lb_listening_port?.text = "Listening on port: " + (tb_dest_port?.text!)!
-            ViewController.boxPort = (tb_dest_port?.text!)!
-            
+            _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(resetServer), userInfo: nil, repeats: false)
             
             
         }
@@ -652,6 +653,15 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         
     }
     
+    func resetServer(){
+     
+        lb_listening_port?.text = "Listening on port: " + (tb_dest_port?.text!)!
+        
+        stopServer()
+        _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startServer), userInfo: nil, repeats: false)
+        
+    }
+    
     // -------------------------------
     // Update parameters
     // -------------------------------
@@ -744,12 +754,23 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     fileprivate func getNewSocket() -> GCDAsyncUdpSocket? {
         
-        // set port to CallerID.com port --> 3520
-        let port = UInt16(ViewController.boxPort)
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            
+            let path = dir.appendingPathComponent(ViewController.elConfigSaveFile)
+            
+            //reading
+            do {
+                ViewController.boxPort = try String(contentsOf: path, encoding: String.Encoding.utf8)
+            }
+            catch {/* error handling here */}
+            
+        }
         
         // Bind to CallerID.com port (3520)
         let sock = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         do {
+            
+            let port = UInt16(ViewController.boxPort)
             
             try sock.bind(toPort: port!)
             try sock.enableBroadcast(true)
@@ -760,9 +781,10 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
             
         }
         return sock
+
     }
     
-    fileprivate func startServer() {
+    @objc fileprivate func startServer() {
         
         do {
             try socket?.beginReceiving()
