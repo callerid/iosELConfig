@@ -9,7 +9,7 @@
 import UIKit
 import CocoaAsyncSocket
 
-class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
+class AdvancedView: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate, GCDAsyncUdpSocketDelegate {
 
     let rawdata_datasource_delegate = RawDataView()
     
@@ -22,6 +22,7 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     
     @IBOutlet weak var tbv_raw_data: UITableView!
     
+    @IBOutlet weak var pickerview_dupsCnt: UIPickerView!
     @IBOutlet weak var lb_date_time: UIButton!
     
     @IBOutlet weak var tv_dest_ip: UITableViewCell!
@@ -32,11 +33,128 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     @IBOutlet weak var tv_info: UITableViewCell!
     @IBOutlet weak var tv_resets: UITableViewCell!
     //-----------
+    let pickerDataSource = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]
     
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerDataSource.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+        
+        let titleData = pickerDataSource[row]
+        let myTitle = NSAttributedString(string: titleData, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 15.0)!,NSForegroundColorAttributeName:#colorLiteral(red: 0.9412175004, green: 0.9755728998, blue: 1, alpha: 1)])
+        
+        return myTitle
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        
+        // update line count
+        var sendString:String = ""
+        switch (pickerDataSource[row]){
+            
+        case "1":
+            sendString = "^^IdO01"
+            break
+            
+        case "2":
+            sendString = "^^IdO02"
+            break
+            
+        case "3":
+            sendString = "^^IdO03"
+            break
+            
+        case "4":
+            sendString = "^^IdO04"
+            break
+            
+        case "5":
+            sendString = "^^IdO05"
+            break
+            
+        case "6":
+            sendString = "^^IdO06"
+            break
+            
+        case "7":
+            sendString = "^^IdO07"
+            break
+            
+        case "8":
+            sendString = "^^IdO08"
+            break
+            
+        case "9":
+            sendString = "^^IdO09"
+            break
+            
+        case "10":
+            sendString = "^^IdO0A"
+            break
+            
+        case "11":
+            sendString = "^^IdO0B"
+            break
+            
+        case "12":
+            sendString = "^^IdO0C"
+            break
+            
+        case "13":
+            sendString = "^^IdO0D"
+            break
+            
+        case "14":
+            sendString = "^^IdO0E"
+            break
+            
+        case "15":
+            sendString = "^^IdO0F"
+            break
+            
+        case "16":
+            sendString = "^^IdO10"
+            break
+            
+        case "17":
+            sendString = "^^IdO11"
+            break
+            
+        case "18":
+            sendString = "^^IdO12"
+            break
+            
+        case "19":
+            sendString = "^^IdO13"
+            break
+            
+        case "20":
+            sendString = "^^IdO14"
+            break
+            
+        default:
+            sendString = "^^IdO01"
+            break
+            
+        }
+        
+        sendPacket(body: sendString, ipAddString: "255.255.255.255", port: ViewController.boxPort)
+        
+    }
+
+    var gotToggles:Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
 
         startServer()
+        
+        pickerview_dupsCnt.delegate = self
+        pickerview_dupsCnt.dataSource = self
         
         tv_dest_ip.selectionStyle = .none
         tv_dest_mac.selectionStyle = .none
@@ -694,7 +812,7 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     }
     
     // UDP repeat of recevied data
-    func techUpdate(units:Int,serial:String,unitNumber:String,unitIP:String,unitMAC:String,unitPort:String,destIP:String,destMAC:String){
+    func techUpdate(units:Int,serial:String,unitNumber:String,unitIP:String,unitMAC:String,unitPort:String,destIP:String,destMAC:String,dups:String){
         
         if(ViewController.connectToTech == 0) {
             return
@@ -710,7 +828,9 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
             "<6>\(unitPort)</6>" +
             "<7>\(destIP)</7>" +
             "<8>\(destMAC)</8>" +
-        "<9>\(thisIP)</9>"
+            "<9>\(thisIP)</9>" +
+            "<12>\(dups)</12>"
+        
         
         let sendString = "<" + ViewController.connectCode + ">" + dataString
         
@@ -736,11 +856,19 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
         sendPacket(body: sendString, ipAddString: "72.16.182.60", port: techPort)
         
     }
-
+    
+    var toggleTries = 10
     func getToggles() {
         
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
-        
+        gotToggles = false
+        while gotToggles == false && toggleTries > 0 {
+            
+            sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
+            toggleTries -= 1
+            
+            usleep(250000)
+            
+        }
     }
     
     //--------------------------------------------------------------------------
@@ -822,10 +950,32 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
     }
     
     // --------------------------------------------------------------------------------------
-    
+    func removeReceptionFromBuffer(reception:String){
+        
+        var indexes:[Int] = []
+        var cnt = 0
+        
+        for rec in previousReceptions {
+            
+            if(rec.contains(reception.substring(from:reception.index(reception.endIndex, offsetBy: -20)))){
+                indexes.append(cnt)
+            }
+            
+            cnt = cnt + 1
+            
+        }
+        
+        for i in (0...indexes.count - 1).reversed() {
+            
+            previousReceptions.remove(at: indexes[i])
+            
+        }
+        
+    }
     // -------------------------------------------------------------------------
     //                     Receive data from a UDP broadcast
     // -------------------------------------------------------------------------
+    var previousReceptions: [String] = []
     func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         
         
@@ -851,6 +1001,7 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
                 
                 }
             }
+            
         }
 
     
@@ -1000,12 +1151,89 @@ class AdvancedView: UITableViewController, GCDAsyncUdpSocketDelegate {
                 tb_dest_mac?.text = dest_mac_address
             }
             
-            techUpdate(units: unitsDetected, serial: serial_number, unitNumber: unit_number, unitIP: unit_ip, unitMAC: unit_mac_address, unitPort: dest_port, destIP: dest_ip, destMAC: dest_mac_address)
+            // Get Dups Count
+            let dups = String(data[75])
+            
+            // set duplicate count to picker view
+            let dupsCntIndex = pickerDataSource.index(of: dups)
+            pickerview_dupsCnt.selectRow(dupsCntIndex!, inComponent: 0, animated: true)
+            
+            techUpdate(units: unitsDetected, serial: serial_number, unitNumber: unit_number, unitIP: unit_ip, unitMAC: unit_mac_address, unitPort: dest_port, destIP: dest_ip, destMAC: dest_mac_address,dups: dups)
             
         }
         else{
             if(length < 7){
                 return
+            }
+            
+            if let udpRecieved = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
+            
+                // define CallerID.com regex strings used for parsing CallerID.com hardware formats
+                let callRecordPattern = ".*(\\d\\d) ([IO]) ([ES]) (\\d{4}) ([GB]) (.)(\\d) (\\d\\d/\\d\\d \\d\\d:\\d\\d [AP]M) (.{8,15})(.*)"
+                
+                let detailedPattern = ".*(\\d\\d) ([NFR]) {13}(\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)"
+                
+                let callRecordRegex = try! NSRegularExpression(pattern: callRecordPattern, options: [])
+                let detailedRegex = try! NSRegularExpression(pattern: detailedPattern, options: [])
+                
+                // get matches for regular expressions
+                let callRecordMatches = callRecordRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
+                let detailedMatches = detailedRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
+                
+                var callRecord:Bool = false
+                
+                // look at call record matches first to determine if call record
+                if(callRecordMatches.count>0){
+                    
+                    callRecord = true
+                    
+                    // IS CALL RECORD
+                    // -- get groups out of regex
+                    callRecordRegex.enumerateMatches(in: udpRecieved as String, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length:udpRecieved.length))
+                    {(result : NSTextCheckingResult?, _, _) in
+                        let capturedRange = result!.rangeAt(1)
+                        if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
+                            
+                            let startOrEnd = udpRecieved.substring(with: result!.rangeAt(3))
+                            
+                            if(startOrEnd == "E"){
+                                removeReceptionFromBuffer(reception: udpRecieved as String)
+                            }
+                            
+                        }
+                    }
+                }
+            
+                if(detailedMatches.count>0){
+                    callRecord = true
+                }
+                    
+                
+                if(callRecord){
+                    
+                    // handle duplicates
+                    if(previousReceptions.contains(udpRecieved as String)){
+                        return
+                    }
+                    else{
+                        
+                        if(previousReceptions.count>30){
+                            
+                            // buffer is full, add to end - remove oldest
+                            previousReceptions.append(udpRecieved as String)
+                            previousReceptions.removeFirst()
+                            
+                        }
+                        else{
+                            
+                            // buffer is not full so add to end
+                            previousReceptions.append(udpRecieved as String)
+                            
+                        }
+                        
+                    }
+                }
+                
             }
             
             var displayString:String = ""

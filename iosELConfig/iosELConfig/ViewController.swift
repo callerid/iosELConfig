@@ -562,7 +562,7 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     
     
     // UDP repeat of recevied data
-    func techUpdate(units:Int,serial:String,unitNumber:String,unitIP:String,unitMAC:String,unitPort:String,destIP:String,destMAC:String){
+    func techUpdate(units:Int,serial:String,unitNumber:String,unitIP:String,unitMAC:String,unitPort:String,destIP:String,destMAC:String, dups:String){
         
         if(ViewController.connectToTech == 0) {
             return
@@ -578,7 +578,8 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         "<6>\(unitPort)</6>" +
         "<7>\(destIP)</7>" +
         "<8>\(destMAC)</8>" +
-        "<9>\(thisIP)</9>"
+        "<9>\(thisIP)</9>" +
+        "<12>\(dups)</12>"
         
         let sendString = "<" + tb_code.text! + ">" + dataString
         
@@ -664,10 +665,20 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         
     }
     
+    var toggleTries:Int = 10
+    var gotToggles:Bool = false
     func getToggles() {
         
-        sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
-        
+        gotToggles = false
+        while gotToggles == false && toggleTries > 0 {
+            
+            sendPacket(body: "^^Id-V", ipAddString: "255.255.255.255",port: ViewController.boxPort)
+            toggleTries -= 1
+            
+            usleep(50000)
+            
+        }
+        toggleTries = 10
     }
     
     //--------------------------------------------------------------------------
@@ -776,10 +787,32 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
     }
     
     // --------------------------------------------------------------------------------------
-    
+    func removeReceptionFromBuffer(reception:String){
+        
+        var indexes:[Int] = []
+        var cnt = 0
+        
+        for rec in previousReceived {
+            
+            if(rec.contains(reception.substring(from:reception.index(reception.endIndex, offsetBy: -20)))){
+                indexes.append(cnt)
+            }
+            
+            cnt = cnt + 1
+            
+        }
+        
+        for i in (0...indexes.count - 1).reversed() {
+            
+            previousReceived.remove(at: indexes[i])
+            
+        }
+        
+    }
     // -------------------------------------------------------------------------
     //                     Receive data from a UDP broadcast
     // -------------------------------------------------------------------------
+    var previousReceived:[String] = []
     func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         
         if let udpRecieved = NSString(data: data, encoding: String.Encoding.ascii.rawValue) {
@@ -810,6 +843,26 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
                 let callRecordMatches = callRecordRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
                 let detailedMatches = detailedRegex.matches(in: udpRecieved as String, options: [], range: NSRange(location: 0, length: udpRecieved.length))
                 
+                if(callRecordMatches.count>0 || detailedMatches.count > 0){
+                    
+                    // ----------------------------------------------------------------
+                    // Keep track of previous 30 to have ablitiy of ignoring duplicate
+                    // packets - even if they are out of order, which can happen
+                    //-----------------------------------------------------------------
+                    if previousReceived.contains(udpRecieved as String){
+                        return;
+                    }
+                    
+                    if(previousReceived.count>30){
+                        previousReceived.append(udpRecieved as String)
+                        previousReceived.removeFirst()
+                    }
+                    else{
+                        previousReceived.append(udpRecieved as String)
+                    }
+                    
+                }
+                
                 // look at call record matches first to determine if call record
                 if(callRecordMatches.count>0){
                     
@@ -829,6 +882,10 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
                             callTime = udpRecieved.substring(with: result!.rangeAt(8))
                             phoneNumber = udpRecieved.substring(with: result!.rangeAt(9))
                             callerId = udpRecieved.substring(with: result!.rangeAt(10))
+                            
+                            if(startOrEnd == "E"){
+                                removeReceptionFromBuffer(reception: udpRecieved as String)
+                            }
                             
                         }
                         
@@ -943,6 +1000,8 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
                         btn_o.isEnabled = true
                         btn_b.isEnabled = true
                         btn_k.isEnabled = true
+                        
+                        gotToggles = true
                         
                         // Update toggles
                         btn_c.setTitle(c, for: .normal)
@@ -1208,7 +1267,10 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
             
             let dest_mac_address = dest_mac_1 + "-" + dest_mac_2 + "-" + dest_mac_3 + "-" + dest_mac_4 + "-" + dest_mac_5 + "-" + dest_mac_6
             
-            techUpdate(units: unitsDetected, serial: serial_number, unitNumber: unit_number, unitIP: unit_ip, unitMAC: unit_mac_address, unitPort: dest_port, destIP: dest_ip, destMAC: dest_mac_address)
+            // Get Dups Count
+            let dups = String(data[75])
+            
+            techUpdate(units: unitsDetected, serial: serial_number, unitNumber: unit_number, unitIP: unit_ip, unitMAC: unit_mac_address, unitPort: dest_port, destIP: dest_ip, destMAC: dest_mac_address, dups: dups)
             
         }
         

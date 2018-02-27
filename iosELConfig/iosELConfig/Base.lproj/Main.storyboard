@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="ZFb-bM-Vq2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="ZFb-bM-Vq2">
     <device id="ipad9_7" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -554,6 +554,17 @@
                                                         <action selector="tb_dest_ip_undo:" destination="4y4-3u-KXa" eventType="editingChanged" id="Pml-Ek-jEF"/>
                                                     </connections>
                                                 </textField>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="# of Dups:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uGd-JS-pCI">
+                                                    <rect key="frame" x="516" y="14" width="141" height="36"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                                    <color key="textColor" red="0.97763905689999997" green="0.97944538010000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eHi-Wp-dfv">
+                                                    <rect key="frame" x="647" y="0.0" width="294" height="65"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                                </pickerView>
                                             </subviews>
                                             <color key="backgroundColor" red="0.16516572830000001" green="0.2489949437" blue="0.40131152850000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
@@ -816,6 +827,7 @@
                     <connections>
                         <outlet property="lb_date_time" destination="SKM-xU-y2z" id="Yre-gf-pSC"/>
                         <outlet property="lb_listening_port" destination="81a-wu-sYG" id="8nC-yu-XWq"/>
+                        <outlet property="pickerview_dupsCnt" destination="eHi-Wp-dfv" id="wBX-kh-JwF"/>
                         <outlet property="tb_dest_ip" destination="sqa-DW-YCA" id="eee-gt-7gT"/>
                         <outlet property="tb_dest_mac" destination="Q5q-Sg-Vhn" id="eaC-Ci-Eg5"/>
                         <outlet property="tb_dest_port" destination="ldi-gd-ls7" id="gUM-cr-OhC"/>
