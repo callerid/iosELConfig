@@ -156,6 +156,39 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         // Setup update timer for tech connections
          _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startRepeatingUpdates), userInfo: nil, repeats: false)
         
+        // Duplicate handling ticker
+        _ = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(dups_timer_tick), userInfo: nil, repeats: true)
+        
+    }
+    
+    func dups_timer_tick(){
+        
+        if(previousReceived.isEmpty){
+            return
+        }
+        
+        // Create key list
+        var keys_to_remove = [String]()
+        var keys_to_inccrement = [String]()
+        
+        for (key, _) in previousReceived{
+            
+            if(previousReceived[key]! > 4){
+                keys_to_remove.append(key)
+            }
+            else{
+                keys_to_inccrement.append(key)
+            }
+        }
+        
+        for key in keys_to_inccrement{
+            previousReceived[key] = previousReceived[key]! + 1
+        }
+        
+        for key in keys_to_remove{
+            previousReceived.removeValue(forKey: key)
+        }
+        
     }
     
     func tb_ip_validation(txtField: UITextField){
@@ -786,33 +819,11 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
         
     }
     
-    // --------------------------------------------------------------------------------------
-    func removeReceptionFromBuffer(reception:String){
-        
-        var indexes:[Int] = []
-        var cnt = 0
-        
-        for rec in previousReceived {
-            
-            if(rec.contains(reception.substring(from:reception.index(reception.endIndex, offsetBy: -20)))){
-                indexes.append(cnt)
-            }
-            
-            cnt = cnt + 1
-            
-        }
-        
-        for i in (0...indexes.count - 1).reversed() {
-            
-            previousReceived.remove(at: indexes[i])
-            
-        }
-        
-    }
     // -------------------------------------------------------------------------
     //                     Receive data from a UDP broadcast
     // -------------------------------------------------------------------------
-    var previousReceived:[String] = []
+    var previousReceived = [String: Int]()
+    
     func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         
         if let udpRecieved = NSString(data: data, encoding: String.Encoding.ascii.rawValue) {
@@ -849,16 +860,25 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
                     // Keep track of previous 30 to have ablitiy of ignoring duplicate
                     // packets - even if they are out of order, which can happen
                     //-----------------------------------------------------------------
-                    if previousReceived.contains(udpRecieved as String){
-                        return;
+                    let found = previousReceived[udpRecieved as String] != nil
+                    if(found){
+                        return
                     }
                     
                     if(previousReceived.count>30){
-                        previousReceived.append(udpRecieved as String)
-                        previousReceived.removeFirst()
+                        previousReceived[udpRecieved as String] = 0
+                        
+                        var removal_key = ""
+                        for key in previousReceived.keys{
+                            removal_key = key
+                            break
+                        }
+                        
+                        previousReceived.removeValue(forKey: removal_key)
+                        
                     }
                     else{
-                        previousReceived.append(udpRecieved as String)
+                        previousReceived[udpRecieved as String] = 0
                     }
                     
                 }
@@ -882,10 +902,6 @@ class ViewController: UITableViewController, UIPickerViewDataSource, UIPickerVie
                             callTime = udpRecieved.substring(with: result!.rangeAt(8))
                             phoneNumber = udpRecieved.substring(with: result!.rangeAt(9))
                             callerId = udpRecieved.substring(with: result!.rangeAt(10))
-                            
-                            if(startOrEnd == "E"){
-                                removeReceptionFromBuffer(reception: udpRecieved as String)
-                            }
                             
                         }
                         
